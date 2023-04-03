@@ -14,6 +14,7 @@ from globals.dateinfo import GetDate
 from globals.dateinfo import GetTime
 from globals.dateinfo import dtfmt
 from libdbr           import fileio
+from libdbr           import paths
 
 
 ## Logs events to console & log file.
@@ -64,7 +65,7 @@ class Logger:
       os.makedirs(self.logsdir)
     date_start = GetDate(dtfmt.LOG)
     time_start = GetTime(dtfmt.LOG)
-    self.logfile = os.path.join(dir_logs, date_start+".txt")
+    self.logfile = paths.join(self.logsdir, date_start+".txt")
 
     date_time = "{} {}".format(date_start, time_start)
     header = "--------------- Log Start: {} ---------------\n".format(date_time)
