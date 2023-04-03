@@ -10,11 +10,10 @@ import errno
 import os
 import sys
 
-from globals.dateinfo import GetDate
-from globals.dateinfo import GetTime
-from globals.dateinfo import dtfmt
-from libdbr           import fileio
-from libdbr           import paths
+from libdbr          import dateinfo
+from libdbr          import fileio
+from libdbr          import paths
+from libdbr.dateinfo import dtfmt
 
 
 ## Logs events to console & log file.
@@ -63,8 +62,8 @@ class Logger:
         self.error("cannot create logs directory, file exists: {}".format(self.logsdir))
         sys.exit(errno.EEXIST)
       os.makedirs(self.logsdir)
-    date_start = GetDate(dtfmt.LOG)
-    time_start = GetTime(dtfmt.LOG)
+    date_start = dateinfo.getDate(dtfmt.LOG)
+    time_start = dateinfo.getTime(dtfmt.LOG)
     self.logfile = paths.join(self.logsdir, date_start+".txt")
 
     date_time = "{} {}".format(date_start, time_start)
@@ -76,7 +75,7 @@ class Logger:
     if not self.logfile or not os.path.isfile(self.logfile):
       # initialization failed or user deleted log file
       return
-    date_time = "{} {}".format(GetDate(dtfmt.LOG), GetTime(dtfmt.LOG))
+    date_time = "{} {}".format(dateinfo.getDate(dtfmt.LOG), dateinfo.getTime(dtfmt.LOG))
     footer = "\n--------------- Log End:   {} ---------------\n\n".format(date_time)
     fileio.appendFile(self.logfile, footer)
 
