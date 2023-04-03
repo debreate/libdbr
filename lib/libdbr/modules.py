@@ -9,6 +9,7 @@
 # Python module handling
 
 import errno
+import importlib
 import subprocess
 import sys
 
@@ -60,7 +61,7 @@ def installModule(name, package=None):
 def getModule(name):
   if name not in installed:
     try:
-      installed[name] = __import__(name)
+      installed[name] = importlib.import_module(name)
     except ModuleNotFoundError:
       logger.warn("module not available: {}".format(name))
       return None
