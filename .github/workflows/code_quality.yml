@@ -1,0 +1,28 @@
+
+name: Code Quality Check
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  linter:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup dependencies
+        run: python3 -m pip install pylint mypy
+
+      - name: check with pylint
+        run: pylint lib/libdbr/
+
+      - name: check with mypy
+        run: mypy lib/libdbr/
