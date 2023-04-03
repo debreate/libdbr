@@ -8,10 +8,6 @@
 
 import subprocess
 
-from libdbr.logger import getLogger
-
-
-__logger = getLogger()
 
 ## Creates a uniform agument list.
 #
@@ -28,7 +24,7 @@ def __parseArgsList(args):
     elif a_type == str:
       args_list.append(a)
     else:
-      __logger.error("incompatible argument type passed to {} ({})"
+      raise TypeError("incompatible argument type passed to {} ({})"
           .format(__name__ + "." + execute.__name__, a_type))
   return args_list
 
