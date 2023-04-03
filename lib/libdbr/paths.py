@@ -65,19 +65,6 @@ def getSystemRoot():
     sys_root += "\\"
   return sys_root
 
-## Checks if a file is marked as executable for the current user.
-#
-#  @param filepath
-#    Path to file to check.
-#  @return
-#    True if current user can execute file.
-def __isExecutable(filepath):
-  if not os.path.exists(filepath) or os.path.isdir(filepath):
-    return False
-  if sys.platform == "win32":
-    return True
-  return os.access(filepath, os.X_OK)
-
 ## Retrieves an executable from PATH environment variable.
 #
 #  @param cmd
@@ -92,11 +79,11 @@ def getExecutable(cmd):
 
   for _dir in path:
     filepath = os.path.join(_dir, cmd)
-    if __isExecutable(filepath):
+    if fileinfo.isExecutable(filepath):
       return filepath
     for ext in path_ext:
       filepath = filepath + "." + ext
-      if __isExecutable(filepath):
+      if fileinfo.isExecutable(filepath):
         return filepath
   return None
 
