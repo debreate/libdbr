@@ -54,16 +54,24 @@ def getHomeDir():
   else:
     return os.getenv("HOME")
 
+
+# cache directory for fast retrieval
+__sys_root = None
+
 ## Retrieves root directory for current system.
 #
 #  @return
 #    System root node string.
 def getSystemRoot():
-  sys_root = "/"
+  global __sys_root
+  if __sys_root:
+    return __sys_root
+
+  __sys_root = os.sep
   if sys.platform == "win32":
-    sys_root = os.getenv("SystemDrive") or "C:"
-    sys_root += "\\"
-  return sys_root
+    __sys_root = os.getenv("SystemDrive", "C:")
+    __sys_root += "\\"
+  return __sys_root
 
 ## Retrieves an executable from PATH environment variable.
 #
