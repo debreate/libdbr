@@ -16,7 +16,7 @@ import sys
 from libdbr.logger import getLogger
 
 
-logger = getLogger()
+__logger = getLogger()
 installed = {}
 
 ## Installs a Python module.
@@ -34,21 +34,21 @@ def installModule(name, package=None):
   if package == None:
     package = name
   if name in installed:
-    logger.warn("not re-installing module: {}".format(name))
+    __logger.warn("not re-installing module: {}".format(name))
     return 0
   try:
     installed[name] = __import__(name)
-    logger.warn("not re-installing module: {}".format(name))
+    __logger.warn("not re-installing module: {}".format(name))
     return 0
   except ModuleNotFoundError:
     pass
-  logger.info("installing module: {}".format(name))
+  __logger.info("installing module: {}".format(name))
   subprocess.run((sys.executable, "-m", "pip", "install", package))
   res = 0
   try:
     installed[name] = __import__(name)
   except ModuleNotFoundError:
-    logger.error("unable to install module: {}".format(name))
+    __logger.error("unable to install module: {}".format(name))
     res = errno.ENOENT
   return res
 
@@ -63,6 +63,6 @@ def getModule(name):
     try:
       installed[name] = importlib.import_module(name)
     except ModuleNotFoundError:
-      logger.warn("module not available: {}".format(name))
+      __logger.warn("module not available: {}".format(name))
       return None
   return installed[name]
