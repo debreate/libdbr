@@ -6,13 +6,14 @@
 # * See: LICENSE.txt for details.                    *
 # ****************************************************
 
-import errno, os, sys
+import errno
+import os
+import sys
 
-from globals          import paths
 from globals.dateinfo import GetDate
 from globals.dateinfo import GetTime
 from globals.dateinfo import dtfmt
-from libdbr.fileio    import appendFile
+from libdbr           import fileio
 
 
 ## Logs events to console & log file.
@@ -51,14 +52,16 @@ class LogLevel:
 class Logger:
   loglevel = LogLevel.INFO
   logfile = None
+  logsdir = None
 
-  def startLogging(self):
-    dir_logs = paths.getLogsDir()
-    if not os.path.isdir(dir_logs):
-      if os.path.exists(dir_logs):
-        self.error("cannot create logs directory, file exists: {}".format(dir_logs))
+  def startLogging(self, logsdir=None):
+    self.logsdir = logsdir
+
+    if not os.path.isdir(self.logsdir):
+      if os.path.exists(self.logsdir):
+        self.error("cannot create logs directory, file exists: {}".format(self.logsdir))
         sys.exit(errno.EEXIST)
-      os.makedirs(dir_logs)
+      os.makedirs(self.logsdir)
     date_start = GetDate(dtfmt.LOG)
     time_start = GetTime(dtfmt.LOG)
     self.logfile = os.path.join(dir_logs, date_start+".txt")
@@ -66,7 +69,7 @@ class Logger:
     date_time = "{} {}".format(date_start, time_start)
     header = "--------------- Log Start: {} ---------------\n".format(date_time)
     # write header to log file
-    appendFile(self.logfile, header)
+    fileio.appendFile(self.logfile, header)
 
   def endLogging(self):
     if not self.logfile or not os.path.isfile(self.logfile):
@@ -74,7 +77,7 @@ class Logger:
       return
     date_time = "{} {}".format(GetDate(dtfmt.LOG), GetTime(dtfmt.LOG))
     footer = "\n--------------- Log End:   {} ---------------\n\n".format(date_time)
-    appendFile(self.logfile, footer)
+    fileio.appendFile(self.logfile, footer)
 
   def setLevel(self, loglevel):
     if type(loglevel) == str:
@@ -114,7 +117,7 @@ class Logger:
     stream.write(msg + "\n")
     # output to log file
     if self.logfile and os.path.isfile(self.logfile):
-      appendFile(self.logfile, msg)
+      fileio.appendFile(self.logfile, msg)
 
   def debug(self, msg, details=None, newline=False):
     self.log(LogLevel.DEBUG, msg, details, newline)
