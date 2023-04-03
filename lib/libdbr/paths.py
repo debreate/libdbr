@@ -49,7 +49,7 @@ def getAppDir():
 #  @return
 #    Absolute path to home directory.
 def getHomeDir():
-  if sys.platform == "win32":
+  if sysinfo.getOSName() == "win32":
     return os.getenv("USERPROFILE")
   else:
     return os.getenv("HOME")
