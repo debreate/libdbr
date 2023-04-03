@@ -9,6 +9,10 @@
 import os
 import sys
 
+from libdbr import fileinfo
+from libdbr import sysinfo
+
+
 ## Normalizes path strings.
 #
 #  @param path
@@ -77,11 +81,25 @@ def getSystemRoot():
   if __sys_root:
     return __sys_root
 
+  os_name = sysinfo.getOSName()
   __sys_root = os.sep
-  if sys.platform == "win32":
+  if os_name == "win32":
     __sys_root = os.getenv("SystemDrive", "C:")
     __sys_root += "\\"
+  elif os_name == "msys":
+    msys_prefix = os.path.dirname(os.getenv("MSYSTEM_PREFIX", ""))
+    if sysinfo.getCoreName() == "msys":
+      msys_prefix = os.path.dirname(msys_prefix)
+    if msys_prefix:
+      __sys_root = msys_prefix + os.sep
   return __sys_root
+
+## Retrieves the relative root for a subsystem such as MSYS.
+def getSubSystemRoot():
+  sys_root = getSystemRoot()
+  if sys_root and sysinfo.getOSName() == "msys":
+    sys_root = sys_root[len(sys_root)-1:]
+  return sys_root
 
 ## Retrieves an executable from PATH environment variable.
 #
