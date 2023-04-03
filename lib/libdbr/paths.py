@@ -9,6 +9,16 @@
 import os
 import sys
 
+## Normalizes path strings.
+#
+#  @param path
+#    String to be normalized.
+#  @return
+#    Path with system dependent prefix & node delimiters.
+def normalize(path):
+  if sys.platform == "win32" and path.startswith(os.sep):
+    path = os.path.join(getSystemRoot(), path.lstrip(os.sep))
+  return os.path.normpath(path)
 
 ## Normalizes & joins path names.
 #
@@ -28,7 +38,7 @@ def join(*paths):
         path = join(path, p.pop(0))
     else:
       path += p
-  return os.path.normpath(path)
+  return normalize(path)
 
 ## Retrieves executed script.
 #
