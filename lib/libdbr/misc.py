@@ -60,6 +60,8 @@ def getLatestChanges(changelog):
 
 ## Run a Unit test.
 #
+#  TODO: move to `unittest` module
+#
 #  @param test_name
 #    Test module to import.
 #  @param test_file

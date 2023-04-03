@@ -18,6 +18,17 @@ from libdbr.logger import getLogger
 logger = getLogger()
 installed = {}
 
+## Installs a Python module.
+#
+#  If module is not installed on system, attempts to download & install using pip. Module is then
+#  cached.
+#
+#  @param name
+#    Canonical name of module to be imported.
+#  @param package
+#    Optional package name which contains module.
+#  @return
+#    0 for success.
 def installModule(name, package=None):
   if package == None:
     package = name
@@ -40,6 +51,12 @@ def installModule(name, package=None):
     res = errno.ENOENT
   return res
 
+## Attempts to retrieve an installed module.
+#
+#  @param name
+#    Canonical name of module.
+#  @return
+#    Imported module object or `None`.
 def getModule(name):
   if name not in installed:
     try:
