@@ -6,12 +6,19 @@
 # * See: LICENSE.txt for details.                    *
 # ****************************************************
 
+import bz2
 import codecs
 import errno
+import gzip
+import lzma
 import os
 import re
 import shutil
+import tarfile
+import zipfile
+import zlib
 
+from tarfile import TarFile
 from zipfile import ZipFile
 
 
@@ -517,7 +524,65 @@ def moveDir(source, target, name=None, mode=__perm["d"], verbose=False):
     print("move '{}' -> '{}' (mode={})".format(source, target, oct(mode)[2:]))
   return 0, None
 
-## Compresses a file into a zip archive.
+
+# supported compression formats (empty string for uncompressed)
+__compression_formats = {"zip": ZipFile, "zlib": zlib, "gz": gzip, "bz2": bz2, "xz": lzma}
+# ~ __archive_formats = ["", "zip"] + list(__compression_formats)
+__archive_formats = ["", "zip", "gz", "bz2", "xz"]
+
+## Retrieves supported compression formats dictionary.
+def getCompressionFormats():
+  return __compression_formats
+
+## Retrieves supported archive formats list.
+def getArchiveFormats():
+  return __archive_formats
+
+## Compresses a single file.
+#
+#  @param source
+#    Path to file to be added.
+#  @param target
+#    Target filename to be created.
+#  @param form
+#    Compression format.
+#  @param rmsrc
+#    If true, delete source file after compression succeeds.
+#  @param verbose
+#    If true, print extra information.
+#  @return
+#    Error code & message.
+def compressFile(source, target, form="gz", rmsrc=False, verbose=False):
+  if form not in __compression_formats:
+    msg = "unsupported compression format '{}'".format(form)
+    # ~ raise TypeError(msg)
+    return 1, msg
+
+  if form == "zip":
+    err, msg = packFile(source, target, form="zip", verbose=verbose)
+  else:
+    err, msg = __checkFileExists(source, action="compress file")
+    if err != 0:
+      return err, msg
+    err, msg = __checkNotExists(target, action="compress file")
+    if err != 0:
+      return err, msg
+
+    fin = codecs.open(source, "rb")
+    data = fin.read()
+    fin.close()
+
+    err, msg = writeFile(target, __compression_formats[form].compress(data), binary=True,
+        verbose=verbose)
+    if type(err) == bool:
+      err = 0 if err else 1
+
+  if err == 0:
+    if rmsrc:
+      err, msg = deleteFile(source, verbose=verbose)
+  return err, msg
+
+## Compresses a file into a zip or tar archive.
 #
 #  TODO:
 #  - support more archive formats
@@ -527,6 +592,8 @@ def moveDir(source, target, name=None, mode=__perm["d"], verbose=False):
 #    Path to file to be added.
 #  @param archive
 #    Path to archive or open archive stream.
+#  @param form
+#    Compression format.
 #  @param amend
 #    Add to without deleting old contents.
 #  @param mode
@@ -535,19 +602,42 @@ def moveDir(source, target, name=None, mode=__perm["d"], verbose=False):
 #    If true, print extra information.
 #  @return
 #    Error code & message.
-def packFile(sourcefile, archive, amend=False, mode=__perm["f"], verbose=False):
+def packFile(sourcefile, archive, form="zip", amend=False, mode=__perm["f"], verbose=False):
+  if form not in __archive_formats:
+    msg = "unsupported compression format '{}'".format(form)
+    raise TypeError(msg)
+    return 1, msg
   err, msg = __checkFileExists(sourcefile)
   if err != 0:
     return err, msg
-  new_archive = type(archive) != ZipFile
+  a_type = type(archive)
+  new_archive = a_type != ZipFile and a_type != TarFile
   zopen = archive
+  # for amending compressed tarballs
+  contents = []
   if new_archive:
-    err, msg = __checkNotDir(archive, "create zip")
+    err, msg = __checkNotDir(archive, "create archive")
     if err != 0:
       return err, msg
     # create a new archive file
-    zopen = ZipFile(archive, "a" if amend else "w")
-  zopen.write(sourcefile)
+    if form == "zip":
+      zopen = ZipFile(archive, "a" if amend else "w")
+    elif form == "":
+      zopen = tarfile.open(archive, "a" if amend else "w")
+    else:
+      # amending a compressed tarfile not possible, must create a new one
+      if amend and os.path.isfile(archive):
+        # get contents of existing file before overwriting
+        tmp = tarfile.open(archive, "r:")
+        contents = tmp.getmembers()
+        tmp.close()
+      zopen = tarfile.open(archive, "w:" + form)
+  if type(zopen) == ZipFile:
+    zopen.write(sourcefile)
+  else:
+    for t_info in contents:
+      zopen.addfile(t_info)
+    zopen.add(sourcefile)
   if verbose:
     print("compress '{}' => '{}'".format(sourcefile, archive))
   # if ZipFile was passed, calling instruction should close the file
@@ -568,6 +658,8 @@ def packFile(sourcefile, archive, amend=False, mode=__perm["f"], verbose=False):
 #    Path to directory to be added.
 #  @param archive
 #    Path to archive.
+#  @param form
+#    Compression format.
 #  @param incroot
 #    If true, include parent directory tree.
 #  @param amend
@@ -578,11 +670,16 @@ def packFile(sourcefile, archive, amend=False, mode=__perm["f"], verbose=False):
 #    If true, print extra information.
 #  @return
 #    Error code & message.
-def packDir(sourcedir, archive, incroot=False, amend=False, mode=__perm["f"], verbose=False):
+def packDir(sourcedir, archive, form="zip", incroot=False, amend=False, mode=__perm["f"],
+    verbose=False):
+  if form not in __archive_formats:
+    msg = "unsupported compression format '{}'".format(form)
+    raise TypeError(msg)
+    return 1, msg
   err, msg = __checkDirExists(sourcedir)
   if err != 0:
     return err, msg
-  err, msg = __checkNotDir(archive, "create zip")
+  err, msg = __checkNotDir(archive, "create archive")
   if err != 0:
     return err, msg
 
@@ -605,17 +702,30 @@ def packDir(sourcedir, archive, incroot=False, amend=False, mode=__perm["f"], ve
     os.chdir(dir_start)
     idx_trim = len(dir_start) + 1
 
-  zopen = ZipFile(archive, "a" if amend else "w")
-  z_count_start = len(zopen.namelist())
+  # for amending compressed tarballs
+  contents = []
+  if form == "zip":
+    zopen = ZipFile(archive, "a" if amend else "w")
+  elif form == "":
+    zopen = tarfile.open(archive, "a" if amend else "w")
+  else:
+    # amending a compressed tarfile not possible, must create a new one
+    if amend and os.path.isfile(archive):
+      # get contents of existing file before overwriting
+      tmp = tarfile.open(archive, "r:")
+      contents = tmp.getmembers()
+      tmp.close()
+    zopen = tarfile.open(archive, "w:" + form)
+  z_count_start = len(zopen.namelist()) if form == "zip" else len(zopen.getnames())
   for ROOT, DIRS, FILES in os.walk(dir_abs):
     for f in FILES:
       f = os.path.join(ROOT, f)[idx_trim:]
-      err, msg = packFile(f, zopen, True, verbose)
+      err, msg = packFile(f, zopen, form=form, amend=True, verbose=verbose)
       if err != 0:
         # make sure to close stream in case of error
         zopen.close()
         return err, msg
-  z_count_end = len(zopen.namelist())
+  z_count_end = len(zopen.namelist()) if form == "zip" else len(zopen.getnames())
   zopen.close()
   os.chmod(archive, mode)
 
@@ -654,7 +764,7 @@ def unpackArchive(filepath, dir_target=None, verbose=False):
   if dir_target == None:
     dir_target = os.path.join(dir_parent, os.path.basename(filepath).lower().split(".zip")[0])
 
-  if os.path.exists(dir_target):
+  if os.path.lexists(dir_target):
     if not os.path.isdir(dir_target):
       return errno.EEXIST, "cannot extract zip, file exists: {}".format(dir_target)
     shutil.rmtree(dir_target)
@@ -663,14 +773,17 @@ def unpackArchive(filepath, dir_target=None, verbose=False):
   os.chdir(dir_target)
   if verbose:
     print("extracting contents of {} ...".format(filepath))
-  zopen = ZipFile(filepath, "r")
+  if zipfile.is_zipfile(filepath):
+    zopen = ZipFile(filepath, "r")
+  elif tarfile.is_tarfile(filepath):
+    zopen = tarfile.open(filepath, "r:*")
   zopen.extractall()
   zopen.close()
   # return to original directory
   os.chdir(dir_start)
   return 0, None
 
-## Replace a pattern in a file.
+## Replace a pattern in a text file.
 #
 #  @param filepath
 #    Path to file to be updated.
