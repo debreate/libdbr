@@ -43,6 +43,31 @@ def __cleanLE(data):
     data = data.replace("\n", __le)
   return data
 
+## Creates an empty file.
+#
+#  @param target
+#    Target filepath.
+#  @param binary
+#    Create a binary file instead of text.
+#  @param verbose
+#    If true, print extra information.
+#  @return
+#    Error code & message.
+def createFile(target, binary=False, verbose=False):
+  err, msg = __checkNotExists(target, action="create file")
+  if err != 0:
+    return err, msg
+  if binary:
+    fout = codecs.open(target, "wb")
+  else:
+    fout = codecs.open(target, "w", "utf-8")
+  fout.close()
+  if not os.path.isfile(target):
+    return errno.ENOENT, "failed to create file '{}'".format(target)
+  if verbose:
+    print("created empty file '{}'".format(target))
+  return 0, None
+
 ## Reads data from a text file.
 #
 #  @param filepath
