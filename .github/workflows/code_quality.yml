@@ -22,7 +22,7 @@ jobs:
         run: python3 -m pip install pylint mypy
 
       - name: check with pylint
-        run: pylint lib/libdbr/
+        run: pylint lib/libdbr/ build.py
 
       - name: check with mypy
-        run: mypy lib/libdbr/
+        run: mypy lib/libdbr/ build.py
