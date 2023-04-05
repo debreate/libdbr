@@ -1,0 +1,17 @@
+
+next
+- initial release
+- created modules:
+  - bin
+  - config
+  - dateinfo
+  - fileinfo
+  - fileio
+  - logger
+  - misc
+  - modules
+  - paths
+  - sysinfo
+  - tasks
+  - unittest
+  - userinfo
