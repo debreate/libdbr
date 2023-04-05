@@ -148,23 +148,28 @@ def checkTimestamp(filepath):
 #  @return
 #    Error code & message.
 def __checkNotExists(target, action=None, add_parent=False):
-  err = errno.EEXIST
+  err = 0
   msg = ""
   if action:
     msg += "cannot " + action + ", "
 
-  if os.path.exists(target):
-    if os.path.isdir(target):
-      err = errno.EISDIR
-      msg += "directory"
-    else:
-      msg += "file"
+  if os.path.isdir(target):
+    err = errno.EISDIR
+    msg += "directory"
+  elif os.path.islink(target):
+    err = errno.EEXIST
+    msg += "link"
+  elif os.path.exists(target):
+    err = errno.EEXIST
+    msg += "file"
+
+  if err != 0:
     msg += " exists: {}".format(target)
     return err, msg
 
   if add_parent:
     dir_parent = os.path.dirname(target)
-    if not os.path.exists(dir_parent):
+    if not os.path.lexists(dir_parent):
       os.makedirs(dir_parent)
     elif not os.path.isdir(dir_parent):
       return err, "cannot create directory, file exists: {}".format(dir_parent)
@@ -182,7 +187,7 @@ def __checkNotDir(target, action=None):
   msg = ""
   if action:
     msg += "cannot " + action + ", "
-  if os.path.exists(target) and os.path.isdir(target):
+  if os.path.isdir(target):
     return errno.EISDIR, msg + "directory exists: {}".format(target)
   return 0, None
 
@@ -259,11 +264,11 @@ def makeDir(dirpath, mode=__perm["d"], verbose=False):
 #  @return
 #    Error code & message.
 def deleteFile(filepath, verbose=False):
-  if os.path.exists(filepath) or os.path.islink(filepath):
+  if os.path.lexists(filepath):
     if os.path.isdir(filepath):
       return errno.EISDIR, "cannot delete file, directory exists: {}".format(filepath)
     os.remove(filepath)
-    if os.path.exists(filepath) or os.path.islink(filepath):
+    if os.path.lexists(filepath):
       return 1, "failed to delete file, an unknown error occured: {}".format(filepath)
     if verbose:
       print("delete file '{}'".format(filepath))
@@ -278,7 +283,7 @@ def deleteFile(filepath, verbose=False):
 #  @return
 #    Error code & message.
 def deleteDir(dirpath, verbose=False):
-  if os.path.exists(dirpath):
+  if os.path.lexists(dirpath):
     if not os.path.isdir(dirpath):
       return errno.EEXIST, "cannot delete directory, file exists: {}".format(dirpath)
     for obj in os.listdir(dirpath):
@@ -292,7 +297,7 @@ def deleteDir(dirpath, verbose=False):
     if len(os.listdir(dirpath)) != 0:
       return errno.ENOTEMPTY, "failed to delete directory, not empty: {}".format(dirpath)
     os.rmdir(dirpath)
-    if os.path.exists(dirpath):
+    if os.path.lexists(dirpath):
       return 1, "failed to delete directory, an unknown error occurred: {}".format(dirpath)
     if verbose:
       print("delete directory '{}'".format(dirpath))
@@ -322,7 +327,7 @@ def copyFile(source, target, name=None, mode=__perm["f"], verbose=False):
   if err != 0:
     return err, msg
   shutil.copyfile(source, target)
-  if not os.path.exists(target):
+  if not os.path.lexists(target):
     return 1, "failed to copy file, an unknown error occurred: {}".format(target)
   os.chmod(target, mode)
   if verbose:
@@ -429,7 +434,7 @@ def moveFile(source, target, name=None, mode=__perm["f"], verbose=False):
   if err != 0:
     return err, msg
   shutil.move(source, target)
-  if os.path.exists(source) or not os.path.exists(target):
+  if os.path.lexists(source) or not os.path.lexists(target):
     return 1, "failed to move file, an unknown error occurred: {}".format(target)
   os.chmod(target, mode)
   if verbose:
