@@ -35,7 +35,7 @@ def setLineEndings(delim):
 #    String to be cleaned.
 #  @return
 #    Formatted string.
-def _cleanLineEndings(data):
+def __cleanLE(data):
   global __le
 
   data = data.replace("\r\n", "\n").replace("\r", "\n")
@@ -53,9 +53,11 @@ def readFile(filepath):
   fin = codecs.open(filepath, "r", "utf-8")
   data = fin.read()
   fin.close()
-  return _cleanLineEndings(data)
+  return __cleanLE(data)
 
 ## Writes text or binary data to a file without preserving previous contents.
+#
+#  FIXME: should return integer instead of boolean
 #
 #  @param filepath
 #    Path to file to be written.
@@ -71,7 +73,7 @@ def writeFile(filepath, data, binary=False, mode=__perm["f"], verbose=False):
   if data == None:
     msg = __name__ + "." + writeFile.__name__ + ": 'data' parameter cannot be None"
     raise TypeError(msg)
-    return False
+    return False, msg
   if type(data) in (list, tuple):
     data = "\n".join(data)
   # make sure parent directory exists
@@ -80,18 +82,18 @@ def writeFile(filepath, data, binary=False, mode=__perm["f"], verbose=False):
     err, msg = makeDir(dir_parent, verbose=verbose)
     if err != 0:
       raise Exception(msg)
-      return False
+      return False, msg
   if binary:
     fout = codecs.open(filepath, "wb")
     fout.write(data)
   else:
     fout = codecs.open(filepath, "w", "utf-8")
-    fout.write(_cleanLineEndings(data))
+    fout.write(__cleanLE(data))
   fout.close()
   os.chmod(filepath, mode)
   if verbose:
     print("create file '{}' (mode={})".format(filepath, oct(mode)[2:]))
-  return True
+  return True, None
 
 ## Writes text data to a file while preserving previous contents.
 #
