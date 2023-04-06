@@ -93,9 +93,38 @@ def formatDebianChanges(changes, info, indent=0, tabs=False):
             li = "  " + li
         dchanges.append("  " + li)
     dchanges.append("")
-    dchanges.append(" -- {} <{}> {}"
+    dchanges.append(" -- {} <{}>  {}"
         .format(info["author"], info["email"], dateinfo.getDebianizedDate()))
-    return "\n".join(dchanges)
+
+    for idx in reversed(range(len(dchanges))):
+      li = dchanges[idx]
+      ll = len(li)
+      # lintian throws a warning for lines longer than 80 characters
+      if ll > 80:
+        indent_idx = 0
+        for char in li:
+          if char not in (" ", "*"):
+            break
+          indent_idx += 1
+
+        break_point = 80
+        for c_idx in reversed(range(break_point)):
+          if li[c_idx] in (" ", "\t"):
+            break_point = c_idx
+            break
+
+        li_head = li[0:break_point]
+        li_tail = li[break_point+1:]
+        li_tail = li_tail.rjust(len(li_tail) + indent_idx + 2)
+
+        dchanges.insert(idx+1, li_tail)
+        dchanges[idx] = li_head
+
+    res = "\n".join(dchanges)
+    # ensure trailing newline
+    if not res.endswith("\n"):
+      res += "\n"
+    return res
   except KeyError as e:
     getLogger(__name__ + "." + formatDebianChanges.__name__) \
         .error("missing required info key {}".format(e))

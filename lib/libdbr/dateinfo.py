@@ -105,6 +105,9 @@ def getTime(fmt=dtfmt.DEFAULT):
     else:
       # format: HH:MM:SS.mmm
       current_time = "{}.{}".format(strftime("%T"), ms)
+  else:
+    # format: HH:MM:SS
+    current_time = strftime("%H:%M:%S")
   return current_time
 
 ## Retrieves current time zone.
