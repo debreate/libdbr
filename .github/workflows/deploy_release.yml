@@ -24,7 +24,11 @@ jobs:
       - name: configure
         run: |
           package=$(grep "^package = " build.conf | head -n 1 | sed -e 's/^package = //')
-          version=$(echo ${{ github.ref_name }})
+          version=$(python3 build.py -v)
+          if [[ "${{ github.ref_name }}" =~ ^v[0-9] ]]; then
+            echo "using GitHub ref version ..."
+            version=$(echo ${{ github.ref_name }} | sed 's/^v//')
+          fi
           echo "configuring ${package} version ${version} ..."
           echo "ver=${version}" >> $GITHUB_ENV
 
