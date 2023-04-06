@@ -24,7 +24,7 @@ jobs:
       - name: configure
         run: |
           package=$(grep "^package = " build.conf | head -n 1 | sed -e 's/^package = //')
-          version=$(grep "^version = " build.conf | head -n 1 | sed -e 's/^version = //')
+          version=$(echo ${{ github.ref_name }})
           echo "configuring ${package} version ${version} ..."
           echo "ver=${version}" >> $GITHUB_ENV
 
