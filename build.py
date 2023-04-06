@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "li
 from libdbr import config
 from libdbr import fileio
 from libdbr import logger
+from libdbr import misc
 from libdbr import paths
 from libdbr import tasks
 
@@ -199,6 +200,12 @@ def taskCheckCode():
     res = res_mypy.returncode
   return res
 
+def taskPrintChanges():
+  changelog = paths.join(paths.getAppDir(), "doc/changelog.txt")
+  if not os.path.isfile(changelog):
+    return
+  print(misc.getLatestChanges(changelog))
+
 
 def initTasks():
   addTask("stage", taskStage, "Prepare files for installation or distribution.")
@@ -209,6 +216,8 @@ def initTasks():
   addTask("clean-dist", taskCleanDist, "Remove built packages from 'build/dist' directory.")
   addTask("test", taskRunTests, "Run configured unit tests from 'tests' directory.")
   addTask("check-code", taskCheckCode, "Check code with pylint & mypy.")
+  addTask("changes", taskPrintChanges,
+      "Print most recent changes from 'doc/changelog.txt' to stdout.")
 
 def initOptions(aparser):
   task_help = []
