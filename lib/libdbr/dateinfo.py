@@ -115,3 +115,7 @@ def getTime(fmt=dtfmt.DEFAULT):
 #    String representation of timezone.
 def getTimeZone(fmt=dtfmt.DEFAULT):
   return strftime("%z")
+
+## Retrievies a date string formatted for Debian changelog.
+def getDebianizedDate():
+  return "{} {} {}".format(getDate(dtfmt.CL), getTime(dtfmt.CL), getTimeZone(dtfmt.CL))
