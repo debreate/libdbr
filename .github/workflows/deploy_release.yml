@@ -1,0 +1,50 @@
+
+name: Deploy Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+  workflow_dispatch:
+
+jobs:
+  dist-packages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: configure
+        run: |
+          version=$(echo ${{ github.ref_name }})
+          package=$(grep "^package = " build.conf | sed -e 's/^package = //')
+          if [[ "${version}" =~ ^v[0-9] ]]; then
+            echo "using GitHub ref version ..."
+            version=$(echo ${version} | sed 's/^v//')
+            sed -i -e "s/^version = .*$/version = ${version}/" build.conf
+          fi
+          version=$(grep "^version = " build.conf | sed -e 's/^version = //')
+          echo "configuring ${package} version ${version} ..."
+          echo "ver=${version}" >> $GITHUB_ENV
+
+      - name: build source package
+        run: python3 build.py -t dist-source
+
+      - name: prepare release information
+        run: echo "Changes:\n\n$(python3 build.py -t changes)" > release_notes.tmp
+
+      - name: publish
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: 'Version ${{ env.ver }}'
+          body_path: release_notes.tmp
+          files: build/dist/*
+          prerelease: true
