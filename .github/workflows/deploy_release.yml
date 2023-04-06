@@ -23,22 +23,16 @@ jobs:
 
       - name: configure
         run: |
-          version=$(echo ${{ github.ref_name }})
-          package=$(grep "^package = " build.conf | sed -e 's/^package = //')
-          if [[ "${version}" =~ ^v[0-9] ]]; then
-            echo "using GitHub ref version ..."
-            version=$(echo ${version} | sed 's/^v//')
-            sed -i -e "s/^version = .*$/version = ${version}/" build.conf
-          fi
-          version=$(grep "^version = " build.conf | sed -e 's/^version = //')
+          package=$(grep "^package = " build.conf | head -n 1 | sed -e 's/^package = //')
+          version=$(grep "^version = " build.conf | head -n 1 | sed -e 's/^version = //')
           echo "configuring ${package} version ${version} ..."
           echo "ver=${version}" >> $GITHUB_ENV
 
       - name: build source package
-        run: python3 build.py -t dist-source
+        run: python3 build.py -t dist-source -V
 
       - name: prepare release information
-        run: echo "Changes:\n\n$(python3 build.py -t changes)" > release_notes.tmp
+        run: echo -e "Changes:\n\n$(python3 build.py -t changes)" > release_notes.tmp
 
       - name: publish
         uses: softprops/action-gh-release@v1
