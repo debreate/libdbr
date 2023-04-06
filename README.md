@@ -19,7 +19,7 @@
 <h2><a href="#toc">Description</a></h2>
 </a>
 
-A high level Python library for [Debreate][proj.gh.debreate]
+A high level Python library for [Debreate][]
 
 
 <a name="license">
