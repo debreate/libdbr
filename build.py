@@ -172,7 +172,7 @@ def initOptions(aparser):
       help="Show libdbr version.")
   aparser.add_argument("-V", "--verbose", action="store_true",
       help="Include detailed task information when printing to stdout.")
-  aparser.add_argument("-t", "--task", choices=tuple(task_list),
+  aparser.add_argument("-t", "--task", #choices=tuple(task_list),
       help="\n".join(task_help))
   aparser.add_argument("-p", "--prefix", default=paths.getSystemRoot() + "usr",
       help="Path prefix to directory where files are to be installed.")
@@ -226,15 +226,18 @@ def main():
   global root_install
   root_install = paths.join(options.dir, options.prefix)
 
-  t = tasks.get(options.task)
-  if not t:
-    exitWithError("unknown task ({})".format(options.task), usage=True)
-  if type(t) != types.FunctionType:
+  if not options.task:
     exitWithError("task argument not supplied", usage=True)
-
-  # run task
-  err = tasks.run(options.task)
-  sys.exit(err)
+  t_ids = options.task.split(",")
+  # check all request task IDs
+  for _id in t_ids:
+    if not _id in task_list:
+      exitWithError("unknown task ({})".format(options.task), usage=True)
+  # run tasks
+  for _id in t_ids:
+    err = tasks.run(_id)
+    if err != 0:
+      sys.exit(err)
 
 # execution insertion
 main()
