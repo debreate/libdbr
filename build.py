@@ -97,10 +97,7 @@ def taskDistSource():
     abspath = paths.join(dir_app, _file)
     checkError((fileio.copyExecutable(abspath, paths.join(root_stage, _file), verbose=options.verbose)))
 
-  ver_string = package_version
-  if package_version_dev > 0:
-    ver_string = "{}-dev{}".format(ver_string, package_version_dev)
-  pkg_dist = paths.join(root_dist, package_name + "_" + ver_string + ".tar.xz")
+  pkg_dist = paths.join(root_dist, package_name + "_" + package_version_full + ".tar.xz")
 
   # FIXME: parent directory should be created automatically
   if not os.path.isdir(root_dist):
@@ -224,7 +221,7 @@ def initOptions(aparser):
   for t in task_list:
     task_help.append(t + ": " + task_list[t])
 
-  aparser.version = package_version
+  aparser.version = package_version_full
   aparser.add_argument("-v", "--version", action="version",
       help="Show libdbr version.")
   aparser.add_argument("-V", "--verbose", action="store_true",
@@ -249,13 +246,16 @@ def main():
   config.setFile(paths.join(dir_app, "build.conf"))
   config.load()
 
-  global package_name, package_version, package_version_dev
+  global package_name, package_version, package_version_dev, package_version_full
   package_name = config.getValue("package")
   package_version = config.getValue("version")
   package_version_dev = 0
   tmp = config.getValue("version_dev")
   if tmp:
     package_version_dev = int(tmp)
+  package_version_full = package_version
+  if package_version_dev > 0:
+    package_version_full = "{}-dev{}".format(package_version_full, package_version_dev)
 
   # initialize tasks
   global task_list
