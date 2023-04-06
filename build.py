@@ -13,6 +13,7 @@ if __name__ != "__main__":
 
 import argparse
 import os
+import subprocess
 import sys
 import types
 
@@ -128,6 +129,30 @@ def taskRunTests():
     else:
       logger.info("{}: OK".format(test_name))
 
+def taskCheckCode():
+  print()
+
+  logger.info("checking code with pylint ...")
+  res_pylint = subprocess.run(("pylint", "lib/libdbr", "build.py"), stdout=subprocess.PIPE,
+      stderr=subprocess.STDOUT)
+  logger.info("checking code with mypy ...")
+  res_mypy = subprocess.run(("mypy", "lib/libdbr", "build.py"), stdout=subprocess.PIPE,
+      stderr=subprocess.STDOUT)
+
+  # pylint doesn't return a message on success
+  if res_pylint.returncode == 0:
+    res_pylint.stdout = b"Success: no issues found"
+
+  print("pylint result:\n{}".format(res_pylint.stdout.decode("utf-8")))
+  print("mypy result:\n{}".format(res_mypy.stdout.decode("utf-8")))
+
+  res = 0
+  if res_pylint.returncode != 0:
+    res = res_pylint.returncode
+  elif res_mypy.returncode != 0:
+    res = res_mypy.returncode
+  return res
+
 
 def initTasks():
   addTask("stage", taskStage, "Prepare files for installation or distribution.")
@@ -135,6 +160,7 @@ def initTasks():
   addTask("clean-stage", taskCleanStage,
       "Remove temporary build files from'build/stage' directory.")
   addTask("test", taskRunTests, "Run configured unit tests from 'tests' directory.")
+  addTask("check-code", taskCheckCode, "Check code with pylint & mypy.")
 
 def initOptions(aparser):
   task_help = []

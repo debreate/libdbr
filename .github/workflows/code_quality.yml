@@ -21,8 +21,5 @@ jobs:
       - name: setup dependencies
         run: python3 -m pip install pylint mypy
 
-      - name: check with pylint
-        run: pylint lib/libdbr/ build.py
-
-      - name: check with mypy
-        run: mypy lib/libdbr/ build.py
+      - name: check code
+        run: python3 build.py -t check-code
