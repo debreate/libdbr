@@ -159,6 +159,10 @@ def initOptions(aparser):
 def main():
   global dir_app
   dir_app = paths.getAppDir()
+
+  # ensure current working directory is app location
+  os.chdir(dir_app)
+
   config.setFile(paths.join(dir_app, "build.conf"))
   config.load()
 
