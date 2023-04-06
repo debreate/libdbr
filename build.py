@@ -34,7 +34,8 @@ logger = logger.getLogger(script_name)
     # ~ print("key: '{}', value: '{}'".format(key, type(help_info["options"][key])))
 
 def exitWithError(msg, code=1, usage=False):
-  logger.error(msg)
+  if msg:
+    logger.error(msg)
   if usage:
     printUsage()
   sys.exit(code)
@@ -196,12 +197,14 @@ def main():
   root_install = paths.join(options.dir, options.prefix)
 
   t = tasks.get(options.task)
-
   if not t:
     exitWithError("unknown task ({})".format(options.task), usage=True)
   if type(t) != types.FunctionType:
     exitWithError("task argument not supplied", usage=True)
-  t()
+
+  # run task
+  err = tasks.run(options.task)
+  sys.exit(err)
 
 # execution insertion
 main()
