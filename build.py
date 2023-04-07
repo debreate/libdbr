@@ -175,27 +175,14 @@ def taskRunTests():
 
 def taskCheckCode():
   print()
-
-  logger.info("checking code with pylint ...")
-  res_pylint = subprocess.run(("pylint", "lib/libdbr", "build.py"), stdout=subprocess.PIPE,
-      stderr=subprocess.STDOUT)
-  logger.info("checking code with mypy ...")
-  res_mypy = subprocess.run(("mypy", "lib/libdbr", "build.py"), stdout=subprocess.PIPE,
-      stderr=subprocess.STDOUT)
-
-  # pylint doesn't return a message on success
-  if res_pylint.returncode == 0:
-    res_pylint.stdout = b"Success: no issues found"
-
-  print("pylint result:\n{}".format(res_pylint.stdout.decode("utf-8")))
-  print("mypy result:\n{}".format(res_mypy.stdout.decode("utf-8")))
-
-  res = 0
-  if res_pylint.returncode != 0:
-    res = res_pylint.returncode
-  elif res_mypy.returncode != 0:
-    res = res_mypy.returncode
-  return res
+  for action in ("pylint", "mypy"):
+    logger.info("checking code with {} ...".format(action))
+    params = [action, dir_app]
+    if options.verbose:
+      params.insert(1, "-v")
+    res = subprocess.run(params)
+    if res.returncode != 0:
+      return res.returncode
 
 def taskPrintChanges():
   changelog = paths.join(paths.getAppDir(), "doc/changelog.txt")
