@@ -22,12 +22,13 @@ import types
 # include libdbr in module search path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "lib"))
 
-from libdbr        import config
-from libdbr        import fileio
-from libdbr        import misc
-from libdbr        import paths
-from libdbr        import tasks
-from libdbr.logger import Logger
+from libdbr         import config
+from libdbr         import fileio
+from libdbr         import misc
+from libdbr         import paths
+from libdbr         import tasks
+from libdbr.logger  import Logger
+from libdbr.strings import sgr
 
 
 script_name = os.path.basename(sys.argv[0])
@@ -110,6 +111,21 @@ def taskDistSource():
     logger.info("built package '{}'".format(pkg_dist))
   else:
     exitWithError("failed to build source package", errno.ENOENT)
+
+def taskBuildDocs():
+  print()
+  logger.info("building Doxygen documentation ...")
+
+  dir_docs = paths.join(dir_app, "build/docs")
+  fileio.makeDir(dir_docs, verbose=options.verbose)
+  subprocess.run(["doxygen"])
+  logger.info("cleaning up ...")
+  for ROOT, DIRS, FILES in os.walk(paths.join(dir_docs, "html")):
+    for _file in FILES:
+      if not _file.endswith(".html"):
+        continue
+      abspath = paths.join(ROOT, _file)
+      fileio.replace(abspath, r"^<!DOCTYPE html.*>$", "<!DOCTYPE html>", count=1, flags=re.M)
 
 def __cleanByteCode(_dir):
   if os.path.basename(_dir) == "__pycache__":
@@ -215,9 +231,10 @@ def taskPrintChanges():
 def initTasks():
   addTask("stage", taskStage, "Prepare files for installation or distribution.")
   addTask("dist-source", taskDistSource, "Build a source distribution package.")
+  addTask("docs", taskBuildDocs, sgr("Build documentation using <bold>Doxygen</bold>."))
   addTask("clean", taskClean, "Remove all temporary build files.")
   addTask("clean-stage", taskCleanStage,
-      "Remove temporary build files from'build/stage' directory.")
+      "Remove temporary build files from 'build/stage' directory.")
   addTask("clean-dist", taskCleanDist, "Remove built packages from 'build/dist' directory.")
   addTask("test", taskRunTests, "Run configured unit tests from 'tests' directory.")
   addTask("check-code", taskCheckCode, "Check code with pylint & mypy.")
