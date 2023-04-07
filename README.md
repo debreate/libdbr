@@ -13,13 +13,14 @@
 - [Building](#build)
     - [Build Script Options](#build-script-args)
     - [Build Script Tasks](#build-script-tasks)
+- [Links](#links)
 
 
 <a name="description">
 <h2><a href="#toc">Description</a></h2>
 </a>
 
-A high level Python library for [Debreate][]
+A high level Python library for [Debreate][].
 
 
 <a name="license">
@@ -79,8 +80,21 @@ A `build.py` script is provided to help with installation & packaging. It is inv
     - Check code with [pylint][proj.pylint] & [mypy][].
 
 
+<a name="links">
+<h3><a href="#toc">Links</a></h3>
+</a>
+
+- [libdbr on GitHub][proj.libdbr]
+- [libdbr on GitLab][proj.libdbr.gl]
+- [debreate on GitHub][proj.debreate]
+- [debreate on GitLab][proj.debreate.gl]
+- [debreate on SourceForge][proj.debreate.sf]
+
+
 <!-- project pages -->
 [proj.debreate]: https://github.com/debreate/debreate
+[proj.debreate.gl]: https://gitlab.com/debreate/debreate
+[proj.debreate.sf]: https://sourceforge.net/projects/debreate
 [proj.libdbr]: https://github.com/debreate/libdbr
 [proj.libdbr.gl]: https://gitlab.com/debreate/libdbr
 [proj.pylint]: https://github.com/pylint-dev/pylint
