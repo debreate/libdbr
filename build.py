@@ -21,16 +21,16 @@ import types
 # include libdbr in module search path
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "lib"))
 
-from libdbr import config
-from libdbr import fileio
-from libdbr import logger
-from libdbr import misc
-from libdbr import paths
-from libdbr import tasks
+from libdbr        import config
+from libdbr        import fileio
+from libdbr        import misc
+from libdbr        import paths
+from libdbr        import tasks
+from libdbr.logger import Logger
 
 
 script_name = os.path.basename(sys.argv[0])
-logger = logger.getLogger(script_name)
+logger = Logger(script_name)
 
 # ~ def printUsage():
   # ~ for key in help_info["options"]:
