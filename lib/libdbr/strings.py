@@ -44,28 +44,28 @@ __sstyles = {
   "pfont": 10,
   "fraktur": 20,
   "dunder": 21,
-  "bold-off": 22,
-  "faint-off": 22,
-  "em-off": 23,
-  "ital-off": 23,
-  "fraktur-off": 23,
-  "under-off": 24,
-  "blink-off": 25,
+  "/bold": 22,
+  "/faint": 22,
+  "/em": 23,
+  "/ital": 23,
+  "/fraktur": 23,
+  "/under": 24,
+  "/blink": 25,
   # 26?
-  "invert-off": 27,
-  "conceal-off": 28,
-  "xout-off": 29,
+  "/invert": 27,
+  "/conceal": 28,
+  "/xout": 29,
   # 38 TODO: set custom color with '5;<n>' or '2;<r>;<g>;<b>'
-  "fg-off": 39,
+  "/fg": 39,
   # 48 TODO: same as 38
-  "bg-off": 49,
+  "/bg": 49,
   # 50?
   "frame": 51,
   "circle": 52,
   "over": 53,
-  "frame-off": 54,
-  "circle-off": 54,
-  "over-off": 55
+  "/frame": 54,
+  "/circle": 54,
+  "/over": 55
   # more?
 }
 
