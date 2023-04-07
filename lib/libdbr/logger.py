@@ -250,14 +250,3 @@ class Logger:
     if alt:
       msg += ", use " + alt + " instead"
     self.warn(msg, newline)
-
-
-## Retrieves a logger.
-#
-#  @param _id
-#    Optional ID to display in log messages.
-#  @return
-#    Logger instance.
-def getLogger(_id=None):
-  Logger().deprecated(__name__, getLogger.__name__, "Logger()")
-  return Logger(_id)

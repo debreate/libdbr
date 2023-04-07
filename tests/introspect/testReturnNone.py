@@ -6,10 +6,10 @@
 # * See: docs/LICENSE.txt for details.               *
 # ****************************************************
 
-from libdbr.logger import getLogger
+from libdbr.logger import Logger
 
 
-logger = getLogger()
+logger = Logger()
 
 def init():
   logger.info("returning none ...")
