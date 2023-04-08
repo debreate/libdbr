@@ -50,7 +50,7 @@ jobs:
   page:
     runs-on: ubuntu-latest
     permissions:
-      pages: write
+      contents: write
     defaults:
       run:
         shell: bash
