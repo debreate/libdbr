@@ -92,7 +92,8 @@ jobs:
           sed -i -e 's/<a href="LICENSE.txt">/<a href="\/libdbr\/LICENSE.txt">/' build/docs/html/index.html
           mv -v build/docs/html/ reference/${{ env.ver }}
           # link to current release
-          ln -vsfr reference/${{ env.ver }} reference/latest
+          rm reference/latest
+          ln -vsr reference/${{ env.ver }} reference/latest
           # update version list
           sed -i -e "s/^        <li><a href=\"latest\/\">latest<\/a><\/li>$/        <li><a href=\"latest\/\">latest<\/a><\/li>\n        <li><a href=\"${{ env.ver }}\/\">${{ env.ver }}<\/a><\/li>/" reference/index.html
 
