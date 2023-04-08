@@ -59,7 +59,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
-    steps:
       - name: build docs
         run: python3 build.py -t docs
 
