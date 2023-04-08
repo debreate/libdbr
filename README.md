@@ -89,6 +89,7 @@ A `build.py` script is provided to help with installation & packaging. It is inv
 - [debreate on GitHub][proj.debreate]
 - [debreate on GitLab][proj.debreate.gl]
 - [debreate on SourceForge][proj.debreate.sf]
+- [reference](https://debreate.github.io/libdbr/reference/)
 
 
 <!-- project pages -->
