@@ -8,13 +8,14 @@
 
 import os
 import sys
+import typing
 
 from libdbr import fileinfo
 from libdbr import sysinfo
 from libdbr import userinfo
 
 
-__cache = {
+__cache: typing.Dict[str, typing.Any] = {
   "executables": {}
 }
 
