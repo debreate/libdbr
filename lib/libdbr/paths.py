@@ -14,7 +14,9 @@ from libdbr import sysinfo
 from libdbr import userinfo
 
 
-__cache = {}
+__cache = {
+  "executables": {}
+}
 
 ## Normalizes path strings.
 #
@@ -137,6 +139,9 @@ def getTempDir():
 #  @return
 #    String path to executable or None if file not found.
 def getExecutable(cmd):
+  if cmd in __cache["executables"]:
+    return __cache["executables"][cmd]
+
   path = os.get_exec_path()
   path_ext = os.getenv("PATHEXT") or []
   if type(path_ext) == str:
@@ -145,10 +150,12 @@ def getExecutable(cmd):
   for _dir in path:
     filepath = os.path.join(_dir, cmd)
     if fileinfo.isExecutable(filepath):
+      __cache["executables"][cmd] = filepath
       return filepath
     for ext in path_ext:
       filepath = filepath + "." + ext
       if fileinfo.isExecutable(filepath):
+        __cache["executables"][cmd] = filepath
         return filepath
   return None
 
