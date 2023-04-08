@@ -57,7 +57,7 @@ def addTask(name, action, desc):
 # --- task function --- #
 
 def taskStage():
-  tasks.run("clean-stage")
+  tasks.run(("update-version", "clean-stage"))
 
   print()
   logger.info("staging files ...")
@@ -113,6 +113,8 @@ def taskDistSource():
     exitWithError("failed to build source package", errno.ENOENT)
 
 def taskBuildDocs():
+  tasks.run("update-version")
+
   print()
   logger.info("building Doxygen documentation ...")
 
@@ -169,6 +171,22 @@ def taskCleanDist():
 
   dir_dist = paths.join(dir_app, "build/dist")
   checkError((fileio.deleteDir(dir_dist, verbose=options.verbose)))
+
+def taskUpdateVersion():
+  print()
+  print("package:     {}".format(package_name))
+  print("version:     {}".format(package_version_full))
+
+  print()
+  logger.info("updating version information ...")
+
+  file_doxy = paths.join(dir_app, "Doxyfile")
+  fileio.replace(file_doxy, r"^PROJECT_NUMBER(.*?)=.*$",
+      r"PROJECT_NUMBER\1= {}".format(package_version_full), count=1, flags=re.M)
+  # update changelog for non-development versions only
+  if package_version_dev == 0:
+    fileio.replace(paths.join(dir_app, "doc/changelog.txt"), r"^next$", package_version_full,
+        count=1, fl=True, verbose=options.verbose)
 
 def taskRunTests():
   from libdbr.unittest import runTest
@@ -236,6 +254,8 @@ def initTasks():
   addTask("clean-stage", taskCleanStage,
       "Remove temporary build files from 'build/stage' directory.")
   addTask("clean-dist", taskCleanDist, "Remove built packages from 'build/dist' directory.")
+  addTask("update-version", taskUpdateVersion,
+      "Update relevant files with version information from 'build.conf'.")
   addTask("test", taskRunTests, "Run configured unit tests from 'tests' directory.")
   addTask("check-code", taskCheckCode, "Check code with pylint & mypy.")
   addTask("changes", taskPrintChanges,
