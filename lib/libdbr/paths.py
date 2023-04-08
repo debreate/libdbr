@@ -52,14 +52,23 @@ def join(*paths):
 #  @return
 #    Absolute path to script filename.
 def getAppPath():
-  return os.path.realpath(sys.argv[0])
+  if "path_app" in __cache:
+    return __cache["path_app"]
+  __cache["path_app"] = os.path.realpath(sys.argv[0])
+  return __cache["path_app"]
 
 ## Retrieves directory of executed script.
 #
 #  @return
 #    Absolute path to script parent directory.
 def getAppDir():
-  return os.path.dirname(getAppPath())
+  if "dir_app" in __cache:
+    return __cache["dir_app"]
+  dir_app = getAppPath()
+  if not os.path.isdir(dir_app):
+    dir_app = os.path.dirname(dir_app)
+  __cache["dir_app"] = dir_app
+  return __cache["dir_app"]
 
 ## Retrieves current user's home directory.
 #
