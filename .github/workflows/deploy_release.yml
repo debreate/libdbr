@@ -59,6 +59,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
+      - name: setup Doxygen
+        run: sudo apt install doxygen
+
       - name: build docs
         run: python3 build.py -t docs
 
