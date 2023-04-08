@@ -46,3 +46,26 @@ jobs:
           body_path: release_notes.tmp
           files: build/dist/*
           prerelease: true
+
+  page:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+    steps:
+      - name: build docs
+        run: python3 build.py -t docs
+
+      - name: Publish
+        uses: peaceiris/actions-gh-pages@v3
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/docs/html/
