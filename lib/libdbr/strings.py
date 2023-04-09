@@ -19,7 +19,7 @@ def __printError(msg):
   sys.stderr.write("ERROR: ({}) {}\n".format(__name__, msg))
 
 
-__type_handlers = {"str": str.__call__}
+__from_handlers = {"str": str.__call__}
 
 ## Convert an object to string.
 #
@@ -35,10 +35,24 @@ def toString(obj, sep=""):
     for i in obj:
       if res:
         res += sep
-      res += str(i)
+      res += toString(i) # FIXME: do we need to pass 'sep' argument?
   else:
     res = str(obj)
   return res
+
+## Converts a string to another type.
+#
+#  @param st
+#    String to be converted.
+#  @param handler
+#    Handler determining return type.
+#  @return
+#    Type instance represented by `st`.
+def fromString(st, handler=str):
+  if handler == str:
+    # no need to convert to same type
+    return st
+  return __from_handlers[handler.__name__](st)
 
 ## Converts a string value to boolean.
 #
@@ -55,7 +69,7 @@ def boolFromString(st):
   except ValueError:
     pass
   return False
-__type_handlers["bool"] = boolFromString
+__from_handlers["bool"] = boolFromString
 
 ## Converts a string to integer.
 #
@@ -79,7 +93,7 @@ def intFromString(st, verbose=False):
   if type(res) == float:
     return int(res)
   return res
-__type_handlers["int"] = intFromString
+__from_handlers["int"] = intFromString
 
 ## Converts a string to float.
 #
@@ -98,7 +112,7 @@ def floatFromString(st, verbose=False):
       __printError("cannot convert '{}' to type 'float'\n{}".format(st, traceback.format_exc))
     return None
   return f
-__type_handlers["float"] = floatFromString
+__from_handlers["float"] = floatFromString
 
 ## Converts a string to list.
 #
@@ -116,7 +130,7 @@ def listFromString(st, sep=";", _type=str, verbose=False):
   l = []
   for c in st.split(sep):
     try:
-      res = __type_handlers[_type.__name__](c)
+      res = __from_handlers[_type.__name__](c)
       if res != None:
         l.append(res)
     except ValueError as e:
@@ -124,6 +138,33 @@ def listFromString(st, sep=";", _type=str, verbose=False):
         __printError("cannot convert '{}' to type '{}'\n{}".format(c, _type, traceback.format_exc))
       return None
   return l or None
+__from_handlers["list"] = listFromString
+__from_handlers["tuple"] = listFromString
+# FIXME: 'dict' should have a special handler
+__from_handlers["dict"] = listFromString
+
+## Converts a string to a list of integers.
+#
+#  @param st
+#    String to parse.
+#  @param sep
+#    Delimiting character to separate string.
+#  @param _type
+#    Data type that list should contain.
+#  @param verbose
+#    Print extra debugging information.
+#  @return
+#    List or tuple.
+def intListFromString(st, sep=";", verbose=False):
+  return listFromString(st, sep, int, verbose)
+__from_handlers["int_list"] = intListFromString
+
+# hack for backward compatibility with Debreate's old config management
+# ~ int_list = types.new_class("int_list")
+def dummyFunction(lst):
+  return tuple(lst)
+int_list = dummyFunction
+int_list.__name__ = "int_list"
 
 __sgrstyles = {
   "end": 0,
