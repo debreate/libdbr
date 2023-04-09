@@ -277,8 +277,8 @@ def save(update=True):
     if type(line) == str:
       lines.append(line)
       continue
-    key = lines_old[0]
-    value = lines_old[1]
+    key = line[0]
+    value = line[1]
     if key in tmp:
       value = tmp[key]
       del tmp[key]
