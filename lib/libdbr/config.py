@@ -32,6 +32,13 @@ def setFile(filepath):
   global __config_file
   __config_file = filepath
 
+## Retrieved configured file.
+#
+#  @return
+#    Path to configuration file.
+def getFile():
+  return __config_file
+
 ## Retrieves the default value for a key.
 #
 #  @param key
