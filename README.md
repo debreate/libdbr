@@ -86,6 +86,7 @@ A `build.py` script is provided to help with installation & packaging. It is inv
 
 - [libdbr on GitHub][proj.libdbr]
 - [libdbr on GitLab][proj.libdbr.gl]
+- [libdbr on SourceForge][proj.libdbr.sf]
 - [debreate on GitHub][proj.debreate]
 - [debreate on GitLab][proj.debreate.gl]
 - [debreate on SourceForge][proj.debreate.sf]
@@ -98,6 +99,7 @@ A `build.py` script is provided to help with installation & packaging. It is inv
 [proj.debreate.sf]: https://sourceforge.net/projects/debreate
 [proj.libdbr]: https://github.com/debreate/libdbr
 [proj.libdbr.gl]: https://gitlab.com/debreate/libdbr
+[proj.libdbr.sf]: https://sourceforge.net/p/debreate/libdbr
 [proj.pylint]: https://github.com/pylint-dev/pylint
 
 <!-- home pages -->
