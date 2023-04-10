@@ -62,7 +62,7 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git branch gh-pages origin/gh-pages
           git checkout ${{ github.ref_name }}
-          git config user.name github-actions[bot]
+          git config user.name "GitHub Actions"
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: setup environment
