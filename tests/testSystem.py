@@ -65,7 +65,6 @@ def checkExecutables():
     if __os_name == "win32":
       shell = paths.join(paths.getSystemRoot(), "Windows", "System32", "cmd.exe")
     else:
-      print("SUBSYTEM")
       shell = paths.normalize("/usr/bin/shell")
   elif not os.path.exists(shell) or os.path.isdir(shell):
     shell = paths.normalize("/bin/sh")
