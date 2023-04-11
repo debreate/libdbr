@@ -27,6 +27,7 @@ from libdbr         import fileio
 from libdbr         import misc
 from libdbr         import paths
 from libdbr         import tasks
+from libdbr.logger  import LogLevel
 from libdbr.logger  import Logger
 from libdbr.strings import sgr
 
@@ -190,6 +191,9 @@ def taskUpdateVersion():
 
 def taskRunTests():
   from libdbr.unittest import runTest
+
+  # enable debugging for tests
+  Logger.setLevel(LogLevel.DEBUG)
 
   dir_tests = paths.join(dir_app, "tests")
   if not os.path.isdir(dir_tests):
