@@ -188,6 +188,14 @@ def taskUpdateVersion():
   if package_version_dev == 0:
     fileio.replace(paths.join(dir_app, "doc/changelog.txt"), r"^next$", package_version_full,
         count=1, fl=True, verbose=options.verbose)
+  tmp = package_version.split(".")
+  script_main = paths.join(dir_app, "lib/libdbr/__init__.py")
+  fileio.replace(script_main, r"^version_major = .*$", "version_major = {}".format(tmp[0]),
+      count=1, verbose=options.verbose)
+  fileio.replace(script_main, r"^version_minor = .*$", "version_minor = {}".format(tmp[1]),
+      count=1, verbose=options.verbose)
+  fileio.replace(script_main, r"^version_dev = .*$", "version_dev = {}".format(package_version_dev),
+      count=1, verbose=options.verbose)
 
 def taskRunTests():
   from libdbr.unittest import runTest
