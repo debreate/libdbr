@@ -9,39 +9,54 @@
 import os
 import sys
 
-from libdbr import fileinfo
-from libdbr import paths
-from libdbr import sysinfo
+from libdbr          import fileinfo
+from libdbr          import paths
+from libdbr          import sysinfo
+from libdbr.logger   import Logger
+from libdbr.unittest import assertEquals
+from libdbr.unittest import assertFalse
+from libdbr.unittest import assertNotEquals
+from libdbr.unittest import assertTrue
 
 
+__logger = Logger(__name__)
 __os_name = sysinfo.getOSName()
 
 def init():
+  checkOSName()
   checkPathSeparator()
   checkSystemRoot()
   checkExecutables()
 
+def checkOSName():
+  os_name = sysinfo.getOSName()
+  __logger.debug("OS name: {}".format(os_name))
+  if sys.platform != "win32":
+    assertNotEquals("win32", os_name)
+  elif os_name != sys.platform:
+    assertEquals("msys", os_name)
+
 def checkPathSeparator():
   msys = os.getenv("MSYSTEM")
   if msys and msys.lower() in sysinfo.__msys:
-    assert __os_name == "msys"
+    assertEquals("msys", __os_name)
   elif sys.platform == "win32":
-    assert __os_name == "win32"
+    assertEquals("win32", __os_name)
 
   if sys.platform == "win32":
     if __os_name == "msys":
-      assert os.sep == "/"
+      assertEquals("/", os.sep)
     else:
-      assert os.sep == "\\"
+      assertEquals("\\", os.sep)
   else:
-    assert os.sep == "/"
+    assertEquals("/", os.sep)
 
 def checkSystemRoot():
   sys_root = paths.getSystemRoot()
   if __os_name == "win32":
-    assert sys_root == os.getenv("SystemDrive") + "\\"
+    assertEquals(os.getenv("SystemDrive") + "\\", sys_root)
   else:
-    assert paths.getSubSystemRoot() == "/"
+    assertEquals("/", paths.getSubSystemRoot())
 
 def checkExecutables():
   # check for common system dependent executable files
@@ -50,8 +65,11 @@ def checkExecutables():
     if __os_name == "win32":
       shell = paths.join(paths.getSystemRoot(), "Windows", "System32", "cmd.exe")
     else:
+      print("SUBSYTEM")
       shell = paths.normalize("/usr/bin/shell")
   elif not os.path.exists(shell) or os.path.isdir(shell):
     shell = paths.normalize("/bin/sh")
-  assert os.path.exists(shell) and not os.path.isdir(shell)
-  assert fileinfo.isExecutable(shell)
+  __logger.debug("checking for shell '{}'".format(shell))
+  assertTrue(os.path.exists(shell))
+  assertFalse(os.path.isdir(shell))
+  assertTrue(fileinfo.isExecutable(shell))

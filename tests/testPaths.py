@@ -9,21 +9,22 @@
 import os
 import sys
 
-from libdbr import paths
+from libdbr          import paths
+from libdbr.unittest import assertEquals
 
 
 def init():
   a = "foo"; b = "bar"; c = "baz"
   subject = a + os.sep + b + os.sep + c
 
-  assert paths.join(a, b, c) == subject
-  assert paths.join((a, b, c)) == subject
-  assert paths.join([a, b, c]) == subject
-  assert paths.join(subject) == subject
-  assert paths.join(a, (b, c)) == subject
-  assert paths.join((a, b), c) == subject
-  assert paths.join(a, [b, c]) == subject
-  assert paths.join([a, b], c) == subject
-  assert paths.join(a + b + c) == "foobarbaz"
-  assert paths.join(a + b, c) == "foobar" + os.sep + "baz"
-  assert paths.join() == "."
+  assertEquals(subject, paths.join(a, b, c))
+  assertEquals(subject, paths.join((a, b, c)))
+  assertEquals(subject, paths.join([a, b, c]))
+  assertEquals(subject, paths.join(subject))
+  assertEquals(subject, paths.join(a, (b, c)))
+  assertEquals(subject, paths.join((a, b), c))
+  assertEquals(subject, paths.join(a, [b, c]))
+  assertEquals(subject, paths.join([a, b], c))
+  assertEquals("foobarbaz", paths.join(a + b + c))
+  assertEquals("foobar" + os.sep + "baz", paths.join(a + b, c))
+  assertEquals(".", paths.join())
