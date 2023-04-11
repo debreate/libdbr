@@ -31,11 +31,17 @@ def normalize(path, strict=False):
   sep = os.sep
   if strict and sys.platform == "win32":
     sep = "\\"
-  if sysinfo.getOSName() == "win32" and path.startswith(sep):
-    path = os.path.join(getSystemRoot(), path.lstrip(sep))
-  if strict and sys.platform == "win32":
-    return path.replace("/", "\\")
-  return os.path.normpath(path)
+  # clean up node delimiters
+  path = path.replace("/", sep).replace("\\", sep)
+  if path.startswith(sep):
+    if strict and sys.platform == "win32" and sysinfo.getOSName() != "win32":
+      path = getSubSystemRoot() + path.lstrip(sep)
+    else:
+      path = getSystemRoot() + path.lstrip(sep)
+  # ~ return os.path.normpath(path)
+  if not path.strip():
+    path = "."
+  return path.replace("{0}{0}".format(sep), sep)
 
 ## Normalizes & joins path names.
 #
