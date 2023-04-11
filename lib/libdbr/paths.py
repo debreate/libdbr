@@ -23,11 +23,18 @@ __cache: typing.Dict[str, typing.Any] = {
 #
 #  @param path
 #    String to be normalized.
+#  @param strict
+#    If `True`, don't use Posix-style paths under MSYS.
 #  @return
 #    Path with system dependent prefix & node delimiters.
-def normalize(path):
-  if sys.platform == "win32" and path.startswith(os.sep):
-    path = os.path.join(getSystemRoot(), path.lstrip(os.sep))
+def normalize(path, strict=False):
+  sep = os.sep
+  if strict and sys.platform == "win32":
+    sep = "\\"
+  if sysinfo.getOSName() == "win32" and path.startswith(sep):
+    path = os.path.join(getSystemRoot(), path.lstrip(sep))
+  if strict and sys.platform == "win32":
+    return path.replace("/", "\\")
   return os.path.normpath(path)
 
 ## Normalizes & joins path names.
