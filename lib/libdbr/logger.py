@@ -254,7 +254,13 @@ class Logger:
   #  @param newline
   #    If true, appends a newline to end of message.
   def deprecated(self, module, name, alt=None, newline=False):
+    alt_st = alt
+    if type(alt) != str:
+      alt_st = alt.__module__
+      if hasattr(alt, "__self__") and hasattr(alt.__self__, "__class__"):
+        alt_st += "." + alt.__self__.__class__.__name__
+      alt_st += "." + alt.__name__
     msg = module + "." + name + " is deprecated"
     if alt:
-      msg += ", use " + alt + " instead"
+      msg += ", use " + alt_st + " instead"
     self.warn(msg, newline)
