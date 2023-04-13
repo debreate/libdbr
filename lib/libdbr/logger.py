@@ -42,19 +42,24 @@ class LogLevel:
   #  @return
   #    Error or None.
   @staticmethod
-  def __check(level):
+  def check(level):
+    try:
+      # allow string integer representations
+      level = int(level)
+    except ValueError:
+      pass
     l_type = type(level)
     if l_type == int:
       if level not in LogLevel.__levels:
         return LogLevelError("level must be within range '{}-{}', found '{}'".format(
             LogLevel.__levels[0], LogLevel.__levels[-1], level))
-      return None
+      return level
     if l_type == str:
       v_up = level.upper()
       l_names = LogLevel.getLevelsNames()
       if v_up not in l_names:
         return LogLevelError("level must be one of '{}', found '{}'".format("|".join(l_names), level))
-      return None
+      return v_up
     return LogLevelError("level type must be 'int' or 'str', found '{}'".format(l_type))
 
   ## Retrivies default logging level.
@@ -71,9 +76,9 @@ class LogLevel:
   #    Logging level.
   @staticmethod
   def setDefault(level):
-    err = LogLevel.__check(level)
-    if err:
-      raise err
+    level = LogLevel.check(level)
+    if isinstance(level, Exception):
+      raise level
 
     if type(level) == str:
       level = LogLevel.fromString(level)
@@ -87,15 +92,9 @@ class LogLevel:
   #    Logging level string representation.
   @staticmethod
   def toString(level):
-    err = LogLevel.__check(level)
-    if err:
-      raise err
-    l_type = type(level)
-    if l_type == str:
-      level = LogLevel.fromString(level)
-      l_type = type(level)
-    if l_type != int:
-      raise LogLevelError("argument must be type 'int', found '{}'".format(l_type))
+    level = LogLevel.check(level)
+    if isinstance(level, Exception):
+      raise level
 
     for lname in LogLevel.getLevelsNames():
       if level == getattr(LogLevel, lname):
@@ -110,17 +109,13 @@ class LogLevel:
   #    Logging level.
   @staticmethod
   def fromString(level):
-    l_type = type(level)
-    if l_type != str:
-      raise LogLevelError("argument must by type 'str', found '{}'".format(l_type))
-    err = LogLevel.__check(level)
-    if err:
-      raise err
+    level = LogLevel.check(level)
+    if isinstance(level, Exception):
+      raise level
 
-    level = level.upper()
-    if hasattr(LogLevel, level):
+    if type(level) == str and hasattr(LogLevel, level):
       return getattr(LogLevel, level)
-    return LogLevel.getDefault()
+    return level
 
   ## Retrieves available logging levels.
   #
@@ -225,12 +220,7 @@ class Logger:
   #    Verbosity level.
   @staticmethod
   def setLevel(loglevel):
-    if type(loglevel) == str:
-      loglevel_up = loglevel.upper()
-      if not loglevel_up in LogLevel.getLevelsNames():
-        Logger.warn(Logger, "invalid logging level: " + loglevel)
-      loglevel = LogLevel.fromString(loglevel_up)
-    Logger.loglevel = loglevel
+    Logger.loglevel = LogLevel.fromString(loglevel)
 
   ## Retrieves level of verbosity.
   #
@@ -286,6 +276,8 @@ class Logger:
     prefix = (LogLevel.toString(lvl) + ":")
     if self.id:
       prefix += " (" + self.id + ")"
+    if isinstance(msg, Exception):
+      msg = str(msg)
     msg = prefix.ljust(30) + " | " + msg
     if details:
       if type(details) == str:
