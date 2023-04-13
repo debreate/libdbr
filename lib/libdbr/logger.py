@@ -359,7 +359,7 @@ class Logger:
       self.deprecated("Logger.deprecated(obj, name)", alt="Logger.deprecated(obj)")
 
     alt_st = alt
-    if type(alt) != str:
+    if alt != None and type(alt) != str:
       alt_st = alt.__module__ if hasattr(alt, "__module__") else ""
       if hasattr(alt, "__self__") and hasattr(alt.__self__, "__class__"):
         alt_st += "." + alt.__self__.__class__.__name__
