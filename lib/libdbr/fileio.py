@@ -162,6 +162,8 @@ __timestamps = {}
 #    Path to file to be checked.
 #  @return
 #    Timestamp string & flag denoting change from a previous timestamp.
+#  @todo
+#    Move to `libdbr.fileinfo`.
 def checkTimestamp(filepath):
   changed = False
   ts = os.stat(filepath).st_mtime
