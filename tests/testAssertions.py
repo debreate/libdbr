@@ -7,6 +7,7 @@
 # ****************************************************
 
 from libdbr.unittest import assertEquals
+from libdbr.unittest import assertError
 from libdbr.unittest import assertFalse
 from libdbr.unittest import assertNone
 from libdbr.unittest import assertNotEquals
@@ -37,38 +38,10 @@ def init():
   assertNotEquals(("foo", "bar"), ("bar", "foo"))
   assertNotEquals(("foo", "bar"), "foo, bar")
 
-  try:
-    assertTrue(False)
-    raise Exception("failure test failed: assertTrue(False)")
-  except AssertionError:
-    pass
-  try:
-    assertFalse(True)
-    raise Exception("failure test failed: assertFalse(True)")
-  except AssertionError:
-    pass
-  try:
-    assertEquals(5, 100)
-    raise Exception("failure test failed: assertEquals(5, 100)")
-  except AssertionError:
-    pass
-  try:
-    assertEquals(5, "foo")
-    raise Exception("failure test failed: assertEquals(5, \"foo\")")
-  except AssertionError:
-    pass
-  try:
-    assertNotEquals(5, 5)
-    raise Exception("failure test failed: assertNotEquals(5, 5)")
-  except AssertionError:
-    pass
-  try:
-    assertNone("")
-    raise Exception("failure test failed: assertNone(\"\")")
-  except AssertionError:
-    pass
-  try:
-    assertNotNone(None)
-    raise Exception("failure test failed: assertNotNone(None)")
-  except AssertionError:
-    pass
+  assertError(assertTrue, False)
+  assertError(assertFalse, True)
+  assertError(assertEquals, 5, 100)
+  assertError(assertEquals, 5, "foo")
+  assertError(assertNotEquals, 5, 5)
+  assertError(assertNone, "")
+  assertError(assertNotNone, None)
