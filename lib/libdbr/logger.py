@@ -31,7 +31,7 @@ class LogLevel:
   SILENT, ERROR, WARN, INFO, DEBUG = __levels
 
   ## String representations of logging levels.
-  __level_names = None
+  __level_names = ()
   ## Default logging level.
   __default = INFO
 
@@ -136,7 +136,7 @@ class LogLevel:
   #    List of logging levels string representations.
   @staticmethod
   def getLevelsNames():
-    if LogLevel.__level_names != None:
+    if LogLevel.__level_names:
       return LogLevel.__level_names
     lnames = []
     for attr in vars(LogLevel):
@@ -227,7 +227,7 @@ class Logger:
   def setLevel(loglevel):
     if type(loglevel) == str:
       loglevel_up = loglevel.upper()
-      if not loglevel_up in LogLevel.strings:
+      if not loglevel_up in LogLevel.getLevelsNames():
         Logger.warn(Logger, "invalid logging level: " + loglevel)
       loglevel = LogLevel.fromString(loglevel_up)
     Logger.loglevel = loglevel
