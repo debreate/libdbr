@@ -11,10 +11,9 @@ import os
 import sys
 import types
 
-from libdbr          import dateinfo
-from libdbr          import fileio
-from libdbr.dateinfo import dtfmt
-
+from .         import dateinfo
+from .         import fileio
+from .dateinfo import dtfmt
 
 ## Exception class for log level errors.
 #

@@ -10,9 +10,9 @@ import os
 import sys
 import typing
 
-from libdbr import fileinfo
-from libdbr import sysinfo
-from libdbr import userinfo
+from . import fileinfo
+from . import sysinfo
+from . import userinfo
 
 
 __cache: typing.Dict[str, typing.Any] = {

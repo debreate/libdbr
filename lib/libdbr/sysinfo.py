@@ -9,7 +9,7 @@
 import os
 import sys
 
-from libdbr import config
+from . import config
 
 
 # MSYS/MinGW platforms

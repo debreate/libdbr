@@ -13,7 +13,7 @@ import importlib
 import subprocess
 import sys
 
-from libdbr.logger import Logger
+from .logger import Logger
 
 
 __logger = Logger(__name__)

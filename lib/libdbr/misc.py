@@ -11,9 +11,9 @@
 import hashlib
 import re
 
-from libdbr import dateinfo
-from libdbr import fileio
-from libdbr.logger import Logger
+from .       import dateinfo
+from .       import fileio
+from .logger import Logger
 
 
 ## Creates a hash from string or bytes data.
