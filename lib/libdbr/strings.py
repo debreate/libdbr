@@ -10,6 +10,7 @@
 #
 #  @package libdbr.strings
 
+import re
 import sys
 import traceback
 
@@ -298,3 +299,13 @@ def isNumeric(st):
   except ValueError:
     return False
   return True
+
+## Checks if string contains any alphabetic characters.
+#
+#  @param st
+#    String or bytes object to check.
+#  @return
+#    `True` if any alphabet characters exist in string.
+def hasAlpha(st):
+  st = toString(st)
+  return re.search("[A-z]", st) != None
