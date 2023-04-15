@@ -115,7 +115,7 @@ def __parseLines(filepath=None):
       lines.append(line)
       continue
     # valid config lines must include '=' & start with alphabetical character
-    if not "=" in line or not line[0].isalpha:
+    if not "=" in line or not line[0].isalpha():
       __logger.error("malformed line in config ({}): '{}'".format(lidx, line_orig))
       continue
     key_value = line.split("=", 1)
