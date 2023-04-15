@@ -278,11 +278,17 @@ def initOptions(aparser):
   for t in task_list:
     task_help.append(t + ": " + task_list[t])
 
-  aparser.version = package_version_full
-  aparser.add_argument("-v", "--version", action="version",
+  log_levels = []
+  for level in LogLevel.getLevels():
+    log_levels.append(sgr("<bold>{}) {}</bold>").format(level, LogLevel.toString(level).lower()))
+
+  aparser.add_argument("-v", "--version", action="store_true",
       help="Show libdbr version.")
   aparser.add_argument("-V", "--verbose", action="store_true",
       help="Include detailed task information when printing to stdout.")
+  aparser.add_argument("-l", "--log-level", metavar="<level>",
+      default=LogLevel.toString(LogLevel.getDefault()).lower(),
+      help="Logging output verbosity.\n  " + "\n  ".join(log_levels))
   aparser.add_argument("-t", "--task", #choices=tuple(task_list),
       help="\n".join(task_help))
   aparser.add_argument("-p", "--prefix", default=paths.getSystemRoot() + "usr",
@@ -300,6 +306,31 @@ def main():
   # ensure current working directory is app location
   os.chdir(dir_app)
 
+  # initialize tasks
+  global task_list
+  task_list = {}
+  initTasks()
+
+  # handle command line input
+  aparser = argparse.ArgumentParser(
+      formatter_class=argparse.RawTextHelpFormatter,
+      description="build script for libdbr",
+      add_help=True)
+
+  global options
+  initOptions(aparser)
+  options = aparser.parse_args()
+
+  err = LogLevel.check(options.log_level)
+  if isinstance(err, Exception):
+    sys.stderr.write(sgr("<red>ERROR: {}</fg>\n".format(err)))
+    print()
+    aparser.print_help()
+    exit(1)
+
+  # set logger level before calling config functions
+  logger.setLevel(options.log_level)
+
   config.setFile(paths.join(dir_app, "build.conf"))
   config.load()
 
@@ -313,26 +344,15 @@ def main():
   package_version_full = package_version
   if package_version_dev > 0:
     package_version_full = "{}-dev{}".format(package_version_full, package_version_dev)
-
-  # initialize tasks
-  global task_list
-  task_list = {}
-  initTasks()
-
-  # handle command line input
-  aparser = argparse.ArgumentParser(
-      formatter_class=argparse.RawTextHelpFormatter,
-      description="build script for " + config.getValue("package") + ": "
-          + config.getValue("description"),
-      add_help=True)
-
-  global options
-  initOptions(aparser)
-  options = aparser.parse_args()
+  aparser.version = package_version_full
 
   # set help function
   global printUsage
   printUsage = aparser.print_help
+
+  if options.version:
+    print(aparser.version)
+    exit(0)
 
   # override argparse help function
   # ~ global help_info
