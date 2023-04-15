@@ -328,7 +328,7 @@ class Config:
         res[li] = True
       else:
         tmp = li.split("=", 1)
-        res[tmp[0].strip()] = handler(_type(tmp[1].strip()))
+        res[tmp[0].strip()] = handler(tmp[1].strip())
     return res
 
   ## Retrievies configuration keys.

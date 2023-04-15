@@ -37,7 +37,7 @@ class Pair:
   #    Operator in question.
   def __compare_error(self, _type, oper):
     raise TypeError("'{}' cannot be compared to '{}' using operator '{}'"
-        .format(_type.__name__, Pair.__name__))
+        .format(_type.__name__, Pair.__name__, oper))
 
   def __eq__(self, other):
     o_type = type(other)
