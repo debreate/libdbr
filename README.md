@@ -48,6 +48,10 @@ A `build.py` script is provided to help with installation & packaging. It is inv
     - Show libdbr version.
 - `-V|--verbose`
     - Include detailed task information when printing to stdout.
+- `-l|--log-level <level>`
+    - Logging output verbosity.
+    - Levels are __0__ (__silent__), __1__ (__error__), __2__ (__warn__), __3__ (__info__),
+      & __4__ (__debug__).
 - `-t|--task <task>`
     - Task(s) to execute. Multiple tasks can be separated by comma. See
       [Build Script Tasks](#build-script-tasks).
