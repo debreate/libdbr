@@ -80,7 +80,7 @@ def fromString(st, handler=str):
 #  @param st
 #    String to parse.
 def boolFromString(st):
-  if st.lower() == "true":
+  if st.lower() in ("true", "yes"):
     return True
   try:
     tmp = float(st)
