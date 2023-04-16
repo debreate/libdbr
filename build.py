@@ -71,10 +71,10 @@ def taskStage():
   dir_data = paths.join(root_data, package_name)
   dir_doc = paths.join(root_doc, package_name)
 
-  for _dir in config.getValue("dirs_app").split(";"):
+  for _dir in cfg.getValue("dirs_app").split(";"):
     checkError((fileio.copyDir(paths.join(dir_app, _dir), paths.join(dir_data, _dir),
         _filter=r"\.py$", exclude="__pycache__", verbose=options.verbose)))
-  for _file in config.getValue("files_doc").split(";"):
+  for _file in cfg.getValue("files_doc").split(";"):
     checkError((fileio.copyFile(paths.join(dir_app, _file), paths.join(dir_doc, _file),
         verbose=options.verbose)))
 
@@ -87,16 +87,16 @@ def taskDistSource():
   root_stage = paths.join(dir_app, "build/stage")
   root_dist = paths.join(dir_app, "build/dist")
 
-  for _dir in config.getValue("dirs_dist_py").split(";"):
+  for _dir in cfg.getValue("dirs_dist_py").split(";"):
     abspath = paths.join(dir_app, _dir)
     checkError((fileio.copyDir(abspath, paths.join(root_stage, _dir), exclude=r"^(.*\.pyc|__pycache__)$", verbose=options.verbose)))
-  for _dir in config.getValue("dirs_dist_data").split(";"):
+  for _dir in cfg.getValue("dirs_dist_data").split(";"):
     abspath = paths.join(dir_app, _dir)
     checkError((fileio.copyDir(abspath, paths.join(root_stage, _dir), verbose=options.verbose)))
-  for _file in config.getValue("files_dist_data").split(";"):
+  for _file in cfg.getValue("files_dist_data").split(";"):
     abspath = paths.join(dir_app, _file)
     checkError((fileio.copyFile(abspath, paths.join(root_stage, _file), verbose=options.verbose)))
-  for _file in config.getValue("files_dist_exe").split(";"):
+  for _file in cfg.getValue("files_dist_exe").split(";"):
     abspath = paths.join(dir_app, _file)
     checkError((fileio.copyExecutable(abspath, paths.join(root_stage, _file), verbose=options.verbose)))
 
@@ -150,7 +150,7 @@ def taskClean():
   dir_build = paths.join(dir_app, "build")
   checkError((fileio.deleteDir(dir_build, verbose=options.verbose)))
 
-  excludes = config.getValue("exclude_clean_dirs").split(";")
+  excludes = cfg.getValue("exclude_clean_dirs").split(";")
   for ROOT, DIRS, FILES in os.walk(dir_app):
     for _dir in DIRS:
       abspath = paths.join(ROOT, _dir)
@@ -331,14 +331,14 @@ def main():
   # set logger level before calling config functions
   logger.setLevel(options.log_level)
 
-  config.setFile(paths.join(dir_app, "build.conf"))
-  config.load()
+  global cfg
+  cfg = config.add("build", paths.join(dir_app, "build.conf"))
 
   global package_name, package_version, package_version_dev, package_version_full
-  package_name = config.getValue("package")
-  package_version = config.getValue("version")
+  package_name = cfg.getValue("package")
+  package_version = cfg.getValue("version")
   package_version_dev = 0
-  tmp = config.getValue("version_dev")
+  tmp = cfg.getValue("version_dev")
   if tmp:
     package_version_dev = int(tmp)
   package_version_full = package_version
