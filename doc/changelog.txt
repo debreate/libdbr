@@ -1,17 +1,20 @@
 
-next
+0.1
 - initial release
-- created modules:
-  - bin
-  - config
-  - dateinfo
-  - fileinfo
-  - fileio
-  - logger
-  - misc
-  - modules
-  - paths
-  - sysinfo
-  - tasks
-  - unittest
-  - userinfo
+- module bin: functions for executing sub-processes
+- module clformat: formatter for argparse
+- module compat: functions for version comparison
+- module config: functions & classes for managing confiration files
+- module dateinfo: functions for date & time formatting
+- module fileinfo: functions for file & directory information
+- module fileio: functions for reading & writing files
+- module logger: class for managing message logging
+- module misc: miscellaneous functions
+- module modules: functions for managing third-party Python modules
+- module paths: functions for managing system paths
+- module strings: functions for string formatting & parsing
+- module sysinfo: functions for retrieving system information
+- module tasks: task creation & execution
+- module types: custom types
+- module unittest: functions for running unit tests & handling assertions
+- module userinfo: functions for retrieving user information
