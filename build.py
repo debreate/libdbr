@@ -26,6 +26,7 @@ from libdbr         import config
 from libdbr         import fileio
 from libdbr         import misc
 from libdbr         import paths
+from libdbr         import strings
 from libdbr         import tasks
 from libdbr.logger  import LogLevel
 from libdbr.logger  import Logger
@@ -183,19 +184,19 @@ def taskUpdateVersion():
 
   file_doxy = paths.join(dir_app, "Doxyfile")
   fileio.replace(file_doxy, r"^PROJECT_NUMBER(.*?)=.*$",
-      r"PROJECT_NUMBER\1= {}".format(package_version_full), count=1, flags=re.M)
+      r"PROJECT_NUMBER\1= {}".format(package_version_full), count=1, flags=re.M,
+      verbose=options.verbose)
   # update changelog for non-development versions only
   if package_version_dev == 0:
     fileio.replace(paths.join(dir_app, "doc/changelog.txt"), r"^next$", package_version_full,
         count=1, fl=True, verbose=options.verbose)
   tmp = package_version.split(".")
   script_main = paths.join(dir_app, "lib/libdbr/__init__.py")
-  fileio.replace(script_main, r"^version_major = .*$", "version_major = {}".format(tmp[0]),
-      count=1, verbose=options.verbose)
-  fileio.replace(script_main, r"^version_minor = .*$", "version_minor = {}".format(tmp[1]),
-      count=1, verbose=options.verbose)
-  fileio.replace(script_main, r"^version_dev = .*$", "version_dev = {}".format(package_version_dev),
-      count=1, verbose=options.verbose)
+  repl = (
+    ("^__version = .*$", "__version = ({})".format(strings.toString(tmp, sep=", "))),
+    ("^__version_dev = .*$", "__version_dev = {}".format(package_version_dev))
+  )
+  fileio.replace(script_main, repl, count=1, verbose=options.verbose)
 
 def taskRunTests():
   from libdbr.unittest import runTest
