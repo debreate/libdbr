@@ -346,7 +346,7 @@ def main():
     package_version_dev = int(tmp)
   package_version_full = package_version
   if package_version_dev > 0:
-    package_version_full = "{}-dev{}".format(package_version_full, package_version_dev)
+    package_version_full = "{}dev{}".format(package_version_full, package_version_dev)
   aparser.version = package_version_full
 
   # set help function
