@@ -202,7 +202,9 @@ class Config:
   #    Value to be set.
   #  @param section
   #    Section name to be amended (default: "").
-  def setValue(self, key, value, section=None):
+  #  @param sep
+  #    For list types (default: ",").
+  def setValue(self, key, value, section=None, sep=","):
     section = section or self.__default_section
     try:
       key = strings.checkString(key).strip()
@@ -218,7 +220,7 @@ class Config:
         conf.pop(idx)
         insert_idx = idx
         break
-    conf.insert(insert_idx, Pair(key, strings.toString(value)))
+    conf.insert(insert_idx, Pair(key, strings.toString(value, sep=sep)))
     self.__sections[section] = conf
 
   ## Retreives a string value from config.

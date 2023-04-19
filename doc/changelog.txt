@@ -1,4 +1,7 @@
 
+next
+- added optional 'sep' parameter to config.setValue for list types
+
 0.1
 - initial release
 - module bin: functions for executing sub-processes
