@@ -4,6 +4,7 @@ next
 - added optional 'load' parameter to config.setFile for immediate loading
 - changed config malformed line log error to warning
 - allow non-strings passed to strings.boolFromString
+- fixed returning default value of Config.getValue when section not found
 
 0.1
 - initial release

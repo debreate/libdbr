@@ -240,6 +240,8 @@ class Config:
   def getValue(self, key, default=None, section=None):
     section = section or self.__default_section
     if section not in self.__sections:
+      if default != None:
+        return default
       raise KeyError("section '{}' not found in config '{}'".format(section, self.__filepath))
 
     s_data = self.__sections[section]
