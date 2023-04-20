@@ -1,6 +1,7 @@
 
 next
 - added optional 'sep' parameter to config.setValue for list types
+- added optional 'load' parameter to config.setFile for immediate loading
 
 0.1
 - initial release

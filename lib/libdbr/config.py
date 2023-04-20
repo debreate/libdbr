@@ -159,8 +159,12 @@ class Config:
   #
   #  @param filepath
   #    Path to configuration file on filesystem.
-  def setFile(self, filepath):
+  #  @param load
+  #    Set to `False` to disable automatically loading file contents into memory.
+  def setFile(self, filepath, load=True):
     self.__filepath = filepath
+    if load and os.path.isfile(filepath):
+      self.load()
 
   ## Loads contents from disk.
   def load(self):
