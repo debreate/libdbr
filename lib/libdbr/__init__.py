@@ -12,7 +12,7 @@ from . import strings
 
 
 __version = (0, 1)
-__version_dev = 0
+__version_dev = 1
 
 ## Retrieves version information.
 def version():
