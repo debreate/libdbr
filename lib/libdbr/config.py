@@ -100,7 +100,7 @@ class Config:
         continue
       # valid config lines must include '=' & start with alphabetical character
       if not "=" in li or not li[0].isalpha():
-        _logger.error("malformed line in config ({}:{}): '{}'"
+        _logger.warn("malformed line in config ({}:{}): '{}'"
             .format(self.__filepath, lidx, line_orig))
         continue
       key_value = li.split("=", 1)
@@ -108,7 +108,7 @@ class Config:
       value = key_value[1].strip()
       # check for empty key or value or invalid characters in key
       if not key or not value or re.search(r" |\t", key):
-        _logger.error("malformed line in config ({}:{}): '{}'"
+        _logger.warn("malformed line in config ({}:{}): '{}'"
             .format(self.__filepath, lidx, line_orig))
         continue
       lines.append(Pair(key, value))
@@ -542,14 +542,14 @@ def __parseLines(filepath=None):
       continue
     # valid config lines must include '=' & start with alphabetical character
     if not "=" in line or not line[0].isalpha():
-      _logger.error("malformed line in config ({}): '{}'".format(lidx, line_orig))
+      _logger.warn("malformed line in config ({}): '{}'".format(lidx, line_orig))
       continue
     key_value = line.split("=", 1)
     key = key_value[0].strip()
     value = key_value[1].strip()
     # check for empty key or value or invalid characters in key
     if not key or not value or re.search(r" |\t", key):
-      _logger.error("malformed line in config ({}): '{}'".format(lidx, line_orig))
+      _logger.warn("malformed line in config ({}): '{}'".format(lidx, line_orig))
       continue
     lines.append((key, value))
   return lines
