@@ -6,6 +6,8 @@
 # * See: LICENSE.txt for details.                    *
 # ****************************************************
 
+## @package libdbr
+
 from . import strings
 
 
