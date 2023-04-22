@@ -6,6 +6,7 @@ next
 - allow non-strings passed to strings.boolFromString
 - fixed returning default value of Config.getValue when section not found
 - strip trailing newline when loading config
+- use "mimetype" command as fallback to "file"
 
 0.1
 - initial release
