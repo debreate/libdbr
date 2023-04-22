@@ -20,6 +20,7 @@ from .bin import execute
 
 
 __default = "application/octet-stream"
+__directory = "inode/directory"
 
 ## Retrieve MimeType info for file.
 #
@@ -28,6 +29,9 @@ __default = "application/octet-stream"
 #  @return
 #    MimeType ID string.
 def getMimeType(filepath):
+  if os.path.isdir(filepath):
+    return __directory
+
   f_info = None
 
   cmd_file = paths.getExecutable("file")
