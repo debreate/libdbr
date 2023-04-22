@@ -7,6 +7,7 @@ next
 - fixed returning default value of Config.getValue when section not found
 - strip trailing newline when loading config
 - use "mimetype" command as fallback to "file"
+- added 'bin.trash' function for moving files to trash
 
 0.1
 - initial release
