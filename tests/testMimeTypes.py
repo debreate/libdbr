@@ -14,7 +14,6 @@ from libdbr          import fileio
 from libdbr          import paths
 from libdbr.unittest import assertEquals
 from libdbr.unittest import assertFalse
-from libdbr.unittest import assertNone
 from libdbr.unittest import assertTrue
 
 
@@ -34,7 +33,7 @@ def init():
 
   file_dummy = paths.join(dir_sandbox, "dummy1")
   assertFalse(os.path.exists(file_dummy))
-  assertNone(fileinfo.getMimeType(file_dummy))
+  assertEquals("unknown", fileinfo.getMimeType(file_dummy))
   fileio.touch(file_dummy)
   assertTrue(os.path.isfile(file_dummy))
   if cmd_file_exists:
