@@ -1,5 +1,5 @@
 
-next
+0.2
 - added optional 'sep' parameter to config.setValue for list types
 - added optional 'load' parameter to config.setFile for immediate loading
 - changed config malformed line log error to warning
