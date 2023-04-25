@@ -1,4 +1,7 @@
 
+next
+- fileio functions copy file permissions be default
+
 0.2
 - added optional 'sep' parameter to config.setValue for list types
 - added optional 'load' parameter to config.setFile for immediate loading
