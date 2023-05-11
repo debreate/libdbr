@@ -14,6 +14,7 @@
     - [Build Script Options](#build-script-args)
     - [Build Script Tasks](#build-script-tasks)
 - [Links](#links)
+- [3rd Party Tools](#3rd-party)
 
 
 <a name="description">
@@ -95,6 +96,13 @@ A `build.py` script is provided to help with installation & packaging. It is inv
 - [debreate on GitLab][proj.debreate.gl]
 - [debreate on SourceForge][proj.debreate.sf]
 - [reference](https://debreate.github.io/libdbr/reference/)
+
+
+<a name="3rd-party">
+<h3><a href="#toc">3rd Party Tools</a></h3>
+</a>
+
+- [recycle-bin](https://github.com/sindresorhus/recycle-bin) ([MIT](lib/libdbr/utilities/doc/LICENSE.recycle-bin.txt))
 
 
 <!-- project pages -->
