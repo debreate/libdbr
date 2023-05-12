@@ -33,7 +33,8 @@ def init():
   assertNotNone(cmd_file)
   if sys.platform == "win32":
     assertNotNone(cmd_recycle)
-    assertNone(cmd_gio)
+    # MSYS supplies gio executable
+    # ~ assertNone(cmd_gio)
 
     assertTrue(os.path.dirname(cmd_file)
         .endswith("utilities" + os.sep + "win{}".format(bit_length)))
