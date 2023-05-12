@@ -11,6 +11,7 @@
 #  @module libdbr.sysinfo
 
 import os
+import platform
 import codecs
 import sys
 
@@ -45,3 +46,7 @@ def getOSName():
 ## Retrieves the system core name.
 def getCoreName():
   return __core_name
+
+## Retrieves the system architecture bit length.
+def getBitLength():
+  return int(platform.architecture()[0].rstrip("bit"))
