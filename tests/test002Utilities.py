@@ -24,13 +24,16 @@ def init():
 
   cmd_file = paths.getExecutable("file")
   cmd_recycle = paths.getExecutable("recycle-bin")
+  cmd_gio = paths.getExecutable("gio")
 
   __logger.debug("file command: {}".format(cmd_file))
   __logger.debug("recycle-bin command: {}".format(cmd_recycle))
+  __logger.debug("gio command: {}".format(cmd_gio))
 
   assertNotNone(cmd_file)
   if sys.platform == "win32":
     assertNotNone(cmd_recycle)
+    assertNone(cmd_gio)
 
     assertTrue(os.path.dirname(cmd_file)
         .endswith("utilities" + os.sep + "win{}".format(bit_length)))
@@ -38,3 +41,4 @@ def init():
         .endswith("utilities" + os.sep + "win{}".format(bit_length)))
   else:
     assertNone(cmd_recycle)
+    assertNotNone(cmd_gio)
