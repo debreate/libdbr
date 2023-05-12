@@ -71,15 +71,17 @@ __cmd_trash = []
 #    `True` if ___files___ no longer exist.
 def trash(files):
   if not __cmd_trash:
-    cmd_tmp = None
+    cmd_tmp = []
     if sys.platform == "win32":
-      cmd_tmp = paths.getExecutable("recycle-bin")
+      cmd_tmp = [paths.getExecutable("recycle-bin")]
     else:
-      cmd_tmp = paths.getExecutable("gio")
-    if cmd_tmp:
-      __cmd_trash.append(cmd_tmp)
-      if cmd_tmp == "gio":
-        __cmd_trash.append("trash")
+      cmd_tmp = [paths.getExecutable("gio")]
+      cmd_tmp.append("trash")
+    for _tmp in cmd_tmp:
+      if _tmp == None:
+        # executable not found
+        break
+      __cmd_trash.append(_tmp)
     else:
       print("WARNING: trashing files not yet supported on platform '{}'".format(platform.uname()[0]))
   if __cmd_trash:
