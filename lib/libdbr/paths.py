@@ -23,6 +23,25 @@ __cache: typing.Dict[str, typing.Any] = {
   "executables": {}
 }
 
+## Retrieves directory root where libdbr files are located.
+def __getLibdbrRoot():
+  if "root_libdbr" not in __cache:
+    __cache["root_libdbr"] = os.path.dirname(os.path.realpath(__file__))
+  return __cache["root_libdbr"]
+
+## Retrievies PATH environment.
+#
+#  @return
+#    List of nodes in the PATH environment variable.
+def __getExecPath():
+  if "exec_path" not in __cache:
+    exec_path = os.get_exec_path()
+    if sys.platform == "win32":
+      # include bundled utilities
+      exec_path.insert(0, join(__getLibdbrRoot(), "utilities/win{}".format(sysinfo.getBitLength())))
+    __cache["exec_path"] = exec_path
+  return __cache["exec_path"]
+
 ## Normalizes path strings.
 #
 #  @param path
@@ -237,7 +256,7 @@ def getExecutable(cmd):
   if cmd in __cache["executables"]:
     return __cache["executables"][cmd]
 
-  path = os.get_exec_path()
+  path = __getExecPath()
   path_ext = os.getenv("PATHEXT") or []
   if type(path_ext) == str:
     path_ext = path_ext.split(";") if sys.platform == "win32" else path_ext.split(":")

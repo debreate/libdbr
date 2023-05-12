@@ -50,9 +50,7 @@ def init():
   if sys.platform != "win32":
     assertEquals("text/x-python", fileinfo.getMimeType(file_dummy))
   else:
-    # fails on remote workflow systems
-    # ~ assertEquals("application/x-python", fileinfo.getMimeType(file_dummy))
-    pass
+    assertEquals("application/x-python", fileinfo.getMimeType(file_dummy))
   if cmd_file_exists:
     fileio.touch(file_dummy)
     assertTrue(os.path.isfile(file_dummy))
