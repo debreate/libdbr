@@ -21,6 +21,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
 
+      - name: setup runtime dependencies
+        run: sudo apt install libglib2.0-bin
+
       - name: run tests
         run: python3 build.py -t test
 
