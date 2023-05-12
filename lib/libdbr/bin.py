@@ -68,17 +68,20 @@ __cmd_trash = []
 #    File(s) to be moved.
 #  @return
 #    `True` if ___files___ no longer exist.
-#  @todo
-#    - Implement for win32.
-#    - See: https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-itransfersource-recycleitem
 def trash(files):
   if not __cmd_trash:
+    cmd_tmp = None
     if sys.platform == "win32":
-      # TODO:
-      print("WARNING: sending files to recycle bin not implemented yet on Windows")
+      cmd_tmp = paths.getExecutable("recycle-bin")
     else:
-      __cmd_trash.append(paths.getExecutable("gio"))
-      __cmd_trash.append("trash")
+      cmd_tmp = paths.getExecutable("gio")
+    if cmd_tmp:
+      __cmd_trash.append(cmd_tmp)
+      if cmd_tmp == "gio":
+        __cmd_trash.append("trash")
+    else:
+      # TODO: add platform/OS warning
+      pass
   if __cmd_trash:
     execute(__cmd_trash[0], __cmd_trash[1:], files)
   if type(files) == str:
