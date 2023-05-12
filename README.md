@@ -102,6 +102,7 @@ A `build.py` script is provided to help with installation & packaging. It is inv
 <h3><a href="#toc">3rd Party Tools</a></h3>
 </a>
 
+- [file](https://www.darwinsys.com/file/) ([BSD](lib/libdbr/utilities/doc/LICENSE.file.txt))
 - [recycle-bin](https://github.com/sindresorhus/recycle-bin) ([MIT](lib/libdbr/utilities/doc/LICENSE.recycle-bin.txt))
 
 
