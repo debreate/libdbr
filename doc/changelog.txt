@@ -1,6 +1,8 @@
 
 next
 - fileio functions copy file permissions be default
+- added bin.trash support for Windows via bundled `recycle-bin` executable
+- bundled `file` executable for Windows
 
 0.2
 - added optional 'sep' parameter to config.setValue for list types
