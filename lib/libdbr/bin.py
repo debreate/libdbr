@@ -12,6 +12,7 @@
 
 import errno
 import os.path
+import platform
 import subprocess
 import sys
 
@@ -80,8 +81,7 @@ def trash(files):
       if cmd_tmp == "gio":
         __cmd_trash.append("trash")
     else:
-      # TODO: add platform/OS warning
-      pass
+      print("WARNING: trashing files not yet supported on platform '{}'".format(platform.uname()[0]))
   if __cmd_trash:
     execute(__cmd_trash[0], __cmd_trash[1:], files)
   if type(files) == str:
