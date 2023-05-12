@@ -11,6 +11,7 @@ import os
 from libdbr          import fileio
 from libdbr          import paths
 from libdbr.bin      import trash
+from libdbr.unittest import assertEquals
 from libdbr.unittest import assertFalse
 from libdbr.unittest import assertTrue
 
@@ -23,5 +24,6 @@ def init():
   assertFalse(os.path.lexists(file_trash))
   fileio.touch(file_trash)
   assertTrue(os.path.isfile(file_trash))
-  trash(file_trash)
+  err = trash(file_trash)
+  assertEquals(0, err)
   assertFalse(os.path.lexists(file_trash))
